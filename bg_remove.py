@@ -42,7 +42,7 @@ def resize_image(image, max_size):
         new_height = max_size
         new_width = int(width * (max_size / height))
     
-    return image.resize((new_width, new_height), Image.LANCZOS)
+    return image.resize((new_width, new_height), Image.BICUBIC)
 
 @st.cache_data
 def process_image(image_bytes):
