@@ -7,6 +7,14 @@ import base64
 import os
 import traceback
 import time
+import logging
+
+# Configure logging
+logging.basicConfig(
+    level=logging.ERROR,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 st.set_page_config(layout="wide", page_title="Image Background Remover")
 
@@ -55,7 +63,9 @@ def process_image(image_bytes):
         fixed = remove(resized)
         return image, fixed
     except Exception as e:
-        st.error(f"Error processing image: {str(e)}")
+        # Secure error handling: Log details, show generic message
+        logger.error(f"Error processing image: {str(e)}", exc_info=True)
+        st.error("An error occurred while processing the image. Please try again.")
         return None, None
 
 def fix_image(upload):
@@ -71,7 +81,8 @@ def fix_image(upload):
         if isinstance(upload, str):
             # Default image path
             if not os.path.exists(upload):
-                st.error(f"Default image not found at path: {upload}")
+                st.error("Default image not found.")
+                logger.error(f"Default image not found at path: {upload}")
                 return
             with open(upload, "rb") as f:
                 image_bytes = f.read()
@@ -111,10 +122,11 @@ def fix_image(upload):
         status_text.text(f"Completed in {processing_time:.2f} seconds")
         
     except Exception as e:
-        st.error(f"An error occurred: {str(e)}")
+        # Secure error handling: Log details, show generic message
+        logger.error(f"Error in fix_image: {str(e)}", exc_info=True)
+        st.error("An error occurred while processing your request. Please try again later.")
         st.sidebar.error("Failed to process image")
-        # Log the full error for debugging
-        print(f"Error in fix_image: {traceback.format_exc()}")
+        # Removed print statement to avoid leaking info to stdout if not handled, logging handles it better.
 
 # UI Layout
 col1, col2 = st.columns(2)

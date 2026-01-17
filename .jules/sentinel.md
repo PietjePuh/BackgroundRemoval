@@ -1,0 +1,4 @@
+## 2024-04-20 - [Information Disclosure Prevention in Streamlit]
+**Vulnerability:** The application was displaying raw exception messages directly to the user via `st.error(str(e))`. This could leak sensitive information such as file paths, database connection strings (if added later), or library internals.
+**Learning:** Streamlit apps often run as scripts where top-level error handling is crucial. Developers might use `st.error` for quick debugging, but this is insecure for production. `unittest` can be used to test Streamlit apps by mocking `sys.modules['streamlit']` before import, but care must be taken to handle top-level script execution (e.g., ensuring `file_uploader` returns `None` during tests).
+**Prevention:** Always use a generic error message for the user interface (e.g., "An error occurred, please try again") and log the detailed exception using the `logging` module with `exc_info=True` for administrators. Avoid `print` for error logging.
