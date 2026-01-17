@@ -5,8 +5,15 @@ import numpy as np
 from io import BytesIO
 import base64
 import os
-import traceback
 import time
+import logging
+
+# Configure logging
+logging.basicConfig(
+    level=logging.ERROR,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 st.set_page_config(layout="wide", page_title="Image Background Remover")
 
@@ -55,7 +62,8 @@ def process_image(image_bytes):
         fixed = remove(resized)
         return image, fixed
     except Exception as e:
-        st.error(f"Error processing image: {str(e)}")
+        st.error("Error processing image. Please try again.")
+        logger.error(f"Error in process_image: {str(e)}", exc_info=True)
         return None, None
 
 def fix_image(upload):
@@ -111,10 +119,10 @@ def fix_image(upload):
         status_text.text(f"Completed in {processing_time:.2f} seconds")
         
     except Exception as e:
-        st.error(f"An error occurred: {str(e)}")
+        st.error("An error occurred. Please check the logs.")
         st.sidebar.error("Failed to process image")
         # Log the full error for debugging
-        print(f"Error in fix_image: {traceback.format_exc()}")
+        logger.error(f"Error in fix_image: {str(e)}", exc_info=True)
 
 # UI Layout
 col1, col2 = st.columns(2)
