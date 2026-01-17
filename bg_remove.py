@@ -23,6 +23,7 @@ MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 MAX_IMAGE_SIZE = 2000  # pixels
 
 # Download the fixed image
+@st.cache_data
 def convert_image(img):
     buf = BytesIO()
     img.save(buf, format="PNG")
