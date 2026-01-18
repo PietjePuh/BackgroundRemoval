@@ -55,7 +55,8 @@ def process_image(image_bytes):
         fixed = remove(resized)
         return image, fixed
     except Exception as e:
-        st.error(f"Error processing image: {str(e)}")
+        print(f"Error processing image: {str(e)}") # Log for debugging
+        st.error("An error occurred while processing the image. Please try again.")
         return None, None
 
 def fix_image(upload):
@@ -111,7 +112,7 @@ def fix_image(upload):
         status_text.text(f"Completed in {processing_time:.2f} seconds")
         
     except Exception as e:
-        st.error(f"An error occurred: {str(e)}")
+        st.error("An error occurred. Please try again.")
         st.sidebar.error("Failed to process image")
         # Log the full error for debugging
         print(f"Error in fix_image: {traceback.format_exc()}")
