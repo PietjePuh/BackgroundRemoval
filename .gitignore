@@ -3,3 +3,6 @@ venv/
 .DS_Store
 elephant.jpg
 Pizigani_1367_Chart_10MB.jpg
+__pycache__/
+*.log
+logs/
