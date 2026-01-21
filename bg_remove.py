@@ -104,12 +104,14 @@ def fix_image(upload):
             "Download fixed image", 
             convert_image(fixed), 
             "fixed.png", 
-            "image/png"
+            "image/png",
+            help="Download the transparent PNG"
         )
         
         progress_bar.progress(100)
         processing_time = time.time() - start_time
         status_text.text(f"Completed in {processing_time:.2f} seconds")
+        st.toast("Image processed successfully!", icon="✨")
         
     except Exception as e:
         st.error("An error occurred. Please try again.")
