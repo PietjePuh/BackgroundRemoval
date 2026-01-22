@@ -110,6 +110,7 @@ def fix_image(upload):
         progress_bar.progress(100)
         processing_time = time.time() - start_time
         status_text.text(f"Completed in {processing_time:.2f} seconds")
+        st.toast("Background removed successfully!", icon="🎉")
         
     except Exception as e:
         st.error("An error occurred. Please try again.")
