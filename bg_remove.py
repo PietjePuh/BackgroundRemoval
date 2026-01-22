@@ -1,9 +1,7 @@
 import streamlit as st
 from rembg import remove
 from PIL import Image
-import numpy as np
 from io import BytesIO
-import base64
 import os
 import traceback
 import time
