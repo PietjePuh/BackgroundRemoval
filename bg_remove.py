@@ -1,5 +1,5 @@
 import streamlit as st
-from rembg import remove
+from rembg import remove, new_session
 from PIL import Image
 import numpy as np
 from io import BytesIO
@@ -44,6 +44,11 @@ def resize_image(image, max_size):
     
     return image.resize((new_width, new_height), Image.LANCZOS)
 
+@st.cache_resource
+def get_model(model_name="u2net"):
+    """Get the rembg model session, cached to avoid reloading."""
+    return new_session(model_name)
+
 @st.cache_data
 def process_image(image_bytes):
     """Process image with caching to avoid redundant processing"""
@@ -52,7 +57,7 @@ def process_image(image_bytes):
         # Resize large images to prevent memory issues
         resized = resize_image(image, MAX_IMAGE_SIZE)
         # Process the image
-        fixed = remove(resized)
+        fixed = remove(resized, session=get_model())
         return image, fixed
     except Exception as e:
         print(f"Error processing image: {str(e)}") # Log for debugging
