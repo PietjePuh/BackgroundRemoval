@@ -1,12 +1,11 @@
-import streamlit as st
-from rembg import remove
-from PIL import Image
-import numpy as np
-from io import BytesIO
-import base64
 import os
 import traceback
 import time
+from io import BytesIO
+
+import streamlit as st
+from rembg import remove
+from PIL import Image
 
 st.set_page_config(layout="wide", page_title="Image Background Remover")
 
@@ -21,6 +20,9 @@ MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 
 # Max dimensions for processing
 MAX_IMAGE_SIZE = 2000  # pixels
+
+# Allowed default images
+DEFAULT_IMAGES = ["./zebra.jpg", "./wallaby.png"]
 
 # Download the fixed image
 def convert_image(img):
@@ -70,6 +72,11 @@ def fix_image(upload):
         
         # Read image bytes
         if isinstance(upload, str):
+            # Security check: Prevent path traversal
+            if upload not in DEFAULT_IMAGES:
+                st.error("Security violation: Invalid file path provided.")
+                return
+
             # Default image path
             if not os.path.exists(upload):
                 st.error(f"Default image not found at path: {upload}")
@@ -142,8 +149,7 @@ if my_upload is not None:
         fix_image(upload=my_upload)
 else:
     # Try default images in order of preference
-    default_images = ["./zebra.jpg", "./wallaby.png"]
-    for img_path in default_images:
+    for img_path in DEFAULT_IMAGES:
         if os.path.exists(img_path):
             fix_image(img_path)
             break
