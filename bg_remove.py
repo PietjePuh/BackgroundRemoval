@@ -106,10 +106,10 @@ def fix_image(upload):
         status_text.text("Displaying results...")
 
         # Display images
-        col1.write("Original Image :camera:")
+        col1.subheader("Original Image :camera:")
         col1.image(image)
 
-        col2.write("Fixed Image :wrench:")
+        col2.subheader("Fixed Image :wrench:")
         col2.image(fixed)
 
         # Prepare download button
@@ -121,6 +121,7 @@ def fix_image(upload):
         progress_bar.progress(100)
         processing_time = time.time() - start_time
         status_text.text(f"Completed in {processing_time:.2f} seconds")
+        st.toast("Image processed successfully! 🎉", icon="🎉")
 
     except Exception as e:
         st.error("An error occurred. Please try again.")
