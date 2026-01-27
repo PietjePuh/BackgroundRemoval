@@ -47,7 +47,7 @@ def resize_image(image, max_size):
         new_height = max_size
         new_width = int(width * (max_size / height))
 
-    return image.resize((new_width, new_height), Image.LANCZOS)
+    return image.resize((new_width, new_height), Image.BICUBIC)
 
 
 @st.cache_data
@@ -60,6 +60,10 @@ def process_image(image_bytes):
         # Process the image
         fixed = remove(resized)
         return image, fixed
+    except Image.DecompressionBombError as e:
+        print(f"Decompression Bomb Error: {e}")  # Log for security audit
+        st.error("Image is too large to process.")
+        return None, None
     except Exception as e:
         print(f"Error processing image: {str(e)}")  # Log for debugging
         st.error("An error occurred while processing the image. Please try again.")
