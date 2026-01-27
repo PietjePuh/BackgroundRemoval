@@ -7,3 +7,8 @@
 **Vulnerability:** The `fix_image` function accepted arbitrary file paths as strings without validation, relying solely on the caller to provide safe inputs.
 **Learning:** Internal helper functions handling file I/O in Streamlit apps often get reused. Implicit trust in callers can lead to Path Traversal if the function is later exposed to user input.
 **Prevention:** Enforce strict allowlists for file paths within the utility function itself, treating it as a security boundary.
+
+## 2026-02-12 - [DoS Vulnerability via Image Resizing Algorithm]
+**Vulnerability:** The application used `Image.LANCZOS` for resizing user-uploaded images. This filter is computationally expensive and scales poorly with image complexity, making it a vector for Denial of Service (DoS) attacks via CPU exhaustion.
+**Learning:** High-quality image processing filters (like LANCZOS) often come with a significant performance cost that can be exploited in public-facing applications.
+**Prevention:** Use `Image.BICUBIC` or `Image.BILINEAR` for resizing user content where strict fidelity is secondary to availability. Explicitly handle `Image.DecompressionBombError` to gracefully reject excessively large images.
