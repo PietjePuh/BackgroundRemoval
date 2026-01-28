@@ -8,7 +8,7 @@ import os
 import traceback
 import time
 
-st.set_page_config(layout="wide", page_title="Image Background Remover")
+st.set_page_config(layout="wide", page_title="Image Background Remover", page_icon="✂️")
 
 st.write("## Remove background from your image")
 st.write(
@@ -119,7 +119,11 @@ def fix_image(upload):
         # Prepare download button
         st.sidebar.markdown("\n")
         st.sidebar.download_button(
-            "Download fixed image", convert_image(fixed), "fixed.png", "image/png"
+            label="Download fixed image 📥",
+            data=convert_image(fixed),
+            file_name="fixed.png",
+            mime="image/png",
+            help="Save the background-removed image to your computer",
         )
 
         progress_bar.progress(100)
