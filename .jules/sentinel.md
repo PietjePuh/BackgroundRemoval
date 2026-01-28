@@ -12,3 +12,8 @@
 **Vulnerability:** The application used `Image.LANCZOS` for resizing user-uploaded images. This filter is computationally expensive and scales poorly with image complexity, making it a vector for Denial of Service (DoS) attacks via CPU exhaustion.
 **Learning:** High-quality image processing filters (like LANCZOS) often come with a significant performance cost that can be exploited in public-facing applications.
 **Prevention:** Use `Image.BICUBIC` or `Image.BILINEAR` for resizing user content where strict fidelity is secondary to availability. Explicitly handle `Image.DecompressionBombError` to gracefully reject excessively large images.
+
+## 2026-02-15 - [Weak Content Type Validation in Image Processing]
+**Vulnerability:** The application accepted any image format supported by PIL (e.g., BMP, GIF, TIFF) despite the UI claiming to support only PNG and JPEG. This mismatch could allow processing of potentially malicious or unexpected file formats.
+**Learning:** Relying on frontend file extension filters or assumed behavior of libraries (`Image.open`) is insufficient. Libraries often support more formats than the application intends to support.
+**Prevention:** Explicitly validate the internal format (Magic Numbers) of uploaded files against a strict allowlist immediately after parsing.
