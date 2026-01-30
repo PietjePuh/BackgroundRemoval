@@ -25,6 +25,9 @@ MAX_IMAGE_SIZE = 2000  # pixels
 # Allowed default images
 DEFAULT_IMAGES = ["./zebra.jpg", "./wallaby.png"]
 
+# Security: Allowed image formats
+ALLOWED_FORMATS = ["JPEG", "PNG"]
+
 
 # Download the fixed image
 def convert_image(img):
@@ -55,6 +58,14 @@ def process_image(image_bytes):
     """Process image with caching to avoid redundant processing"""
     try:
         image = Image.open(BytesIO(image_bytes))
+
+        # Security: Enforce strict format validation
+        if image.format not in ALLOWED_FORMATS:
+            print(
+                f"Security Warning: Attempted processing of disallowed image format: {image.format}"
+            )
+            raise ValueError(f"Unsupported image format: {image.format}")
+
         # Resize large images to prevent memory issues
         resized = resize_image(image, MAX_IMAGE_SIZE)
         # Process the image
