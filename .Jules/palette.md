@@ -5,3 +5,7 @@
 ## 2024-05-23 - Semantic Headings and Delightful Feedback
 **Learning:** Using semantic elements like `st.subheader` instead of generic `st.write` significantly improves document structure for screen readers. Coupling this with `st.toast` for asynchronous success states provides necessary feedback that feels polished ("delightful") without cluttering the UI.
 **Action:** Replace `st.write` with `st.header/subheader` for section titles and always include `st.toast` for successful completion of long-running tasks.
+
+## 2024-05-24 - Explicit Download Context
+**Learning:** Generic "Download" buttons create uncertainty. Explicitly stating the format (e.g., PNG) and key properties (e.g., "transparent background") in a tooltip or label builds confidence.
+**Action:** Enhance download buttons with `help` tooltips that specify file format and content properties.
