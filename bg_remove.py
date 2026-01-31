@@ -10,11 +10,11 @@ import time
 
 st.set_page_config(layout="wide", page_title="Image Background Remover")
 
-st.write("## Remove background from your image")
+st.title("Remove background from your image")
 st.write(
     ":dog: Try uploading an image to watch the background magically removed. Full quality images can be downloaded from the sidebar. This code is open source and available [here](https://github.com/tyler-simons/BackgroundRemoval) on GitHub. Special thanks to the [rembg library](https://github.com/danielgatis/rembg) :grin:"
 )
-st.sidebar.write("## Upload and download :gear:")
+st.sidebar.header("Upload and download :gear:")
 
 # Increased file size limit
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
@@ -119,7 +119,11 @@ def fix_image(upload):
         # Prepare download button
         st.sidebar.markdown("\n")
         st.sidebar.download_button(
-            "Download fixed image", convert_image(fixed), "fixed.png", "image/png"
+            "Download fixed image",
+            convert_image(fixed),
+            "fixed.png",
+            "image/png",
+            help="Download the processed image with transparent background",
         )
 
         progress_bar.progress(100)
