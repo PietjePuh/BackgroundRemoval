@@ -119,7 +119,11 @@ def fix_image(upload):
         # Prepare download button
         st.sidebar.markdown("\n")
         st.sidebar.download_button(
-            "Download fixed image", convert_image(fixed), "fixed.png", "image/png"
+            label="Download fixed image 📥",
+            data=convert_image(fixed),
+            file_name="fixed.png",
+            mime="image/png",
+            help="Download the background-removed image in PNG format (preserves transparency)",
         )
 
         progress_bar.progress(100)
