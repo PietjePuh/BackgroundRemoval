@@ -4,44 +4,53 @@ import pytest
 import os
 import importlib
 
-# Clean up sys.modules to ensure we load bg_remove with OUR mocks
-keys_to_remove = [k for k in sys.modules if 'bg_remove' in k or 'PIL' in k or 'streamlit' in k or 'rembg' in k]
-for k in keys_to_remove:
-    del sys.modules[k]
+@pytest.fixture
+def bg_remove_dos_env():
+    # Setup Mocks
+    mock_st = MagicMock()
+    mock_st.columns.return_value = [MagicMock(), MagicMock()]
+    mock_st.sidebar.file_uploader.return_value = None
+    mock_st.cache_data = lambda func: func
 
-# Mock modules BEFORE importing bg_remove
-mock_st = MagicMock()
-mock_st.columns.return_value = [MagicMock(), MagicMock()]
-mock_st.sidebar.file_uploader.return_value = None
-# Make cache_data a pass-through decorator
-mock_st.cache_data = lambda func: func
+    mock_rembg = MagicMock()
+    mock_numpy = MagicMock()
 
-sys.modules['streamlit'] = mock_st
-sys.modules['rembg'] = MagicMock()
-sys.modules['numpy'] = MagicMock()
+    # Setup Image mock
+    mock_image_module = MagicMock()
+    class MockDecompressionBombError(Exception):
+        pass
+    mock_image_module.DecompressionBombError = MockDecompressionBombError
+    mock_image_module.LANCZOS = 1
+    mock_image_module.BICUBIC = 2
 
-# Setup Image mock
-mock_image_module = MagicMock()
-class MockDecompressionBombError(Exception):
-    pass
-mock_image_module.DecompressionBombError = MockDecompressionBombError
-# Assign values to filters to verify usage
-mock_image_module.LANCZOS = 1
-mock_image_module.BICUBIC = 2
+    mock_pil = MagicMock()
+    mock_pil.Image = mock_image_module
 
-# Crucial: Link PIL.Image in sys.modules AND on the PIL mock
-sys.modules['PIL'] = MagicMock()
-sys.modules['PIL'].Image = mock_image_module
-sys.modules['PIL.Image'] = mock_image_module
+    modules_to_patch = {
+        'streamlit': mock_st,
+        'rembg': mock_rembg,
+        'numpy': mock_numpy,
+        'PIL': mock_pil,
+        'PIL.Image': mock_image_module
+    }
 
-# Import the module
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/../'))
-import bg_remove
+    # Ensure sys.path includes repo root
+    sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/../'))
 
-def test_process_image_handles_decompression_bomb():
+    with patch.dict(sys.modules, modules_to_patch):
+        if 'bg_remove' in sys.modules:
+            import bg_remove
+            importlib.reload(bg_remove)
+        else:
+            import bg_remove
+
+        yield bg_remove
+
+def test_process_image_handles_decompression_bomb(bg_remove_dos_env):
     """
     Test that process_image handles DecompressionBombError by showing a specific error.
     """
+    bg_remove = bg_remove_dos_env
     # Mock Image.open to raise DecompressionBombError
     # We use side_effect with the INSTANCE of the exception
     exception_instance = bg_remove.Image.DecompressionBombError("Bomb!")
@@ -57,10 +66,11 @@ def test_process_image_handles_decompression_bomb():
             # Expect specific error message (Target Behavior)
             mock_error.assert_called_with("Image is too large to process.")
 
-def test_resize_image_uses_bicubic():
+def test_resize_image_uses_bicubic(bg_remove_dos_env):
     """
     Test that resize_image uses BICUBIC filter.
     """
+    bg_remove = bg_remove_dos_env
     # Create a mock image
     mock_img = MagicMock()
     mock_img.size = (5000, 5000) # Large enough to trigger resize

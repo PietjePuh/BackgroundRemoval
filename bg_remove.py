@@ -55,6 +55,17 @@ def process_image(image_bytes):
     """Process image with caching to avoid redundant processing"""
     try:
         image = Image.open(BytesIO(image_bytes))
+
+        # Check for allowed formats to prevent processing of potentially malicious files
+        if image.format not in ["JPEG", "PNG"]:
+            print(
+                f"Security Warning: Attempted to process disallowed image format: {image.format}"
+            )
+            st.error(
+                "Unsupported image format. Please upload a PNG, JPG, or JPEG image."
+            )
+            return None, None
+
         # Resize large images to prevent memory issues
         resized = resize_image(image, MAX_IMAGE_SIZE)
         # Process the image
