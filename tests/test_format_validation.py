@@ -12,8 +12,8 @@ for k in keys_to_remove:
 mock_st = MagicMock()
 mock_st.columns.return_value = [MagicMock(), MagicMock()]
 mock_st.sidebar.file_uploader.return_value = None
-# Make cache_data a pass-through decorator
-mock_st.cache_data = lambda func: func
+# Make cache_data a pass-through decorator (factory pattern)
+mock_st.cache_data = lambda *args, **kwargs: lambda func: func
 
 sys.modules['streamlit'] = mock_st
 sys.modules['rembg'] = MagicMock()
