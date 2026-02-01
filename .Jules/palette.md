@@ -5,3 +5,7 @@
 ## 2024-05-23 - Semantic Headings and Delightful Feedback
 **Learning:** Using semantic elements like `st.subheader` instead of generic `st.write` significantly improves document structure for screen readers. Coupling this with `st.toast` for asynchronous success states provides necessary feedback that feels polished ("delightful") without cluttering the UI.
 **Action:** Replace `st.write` with `st.header/subheader` for section titles and always include `st.toast` for successful completion of long-running tasks.
+
+## 2025-05-24 - Action Proximity in Mobile Layouts
+**Learning:** Placing primary actions (like 'Download') in a collapsible sidebar creates friction for mobile users who must toggle the menu to proceed. Co-locating the next logical action with the result (e.g., button below the image) creates a seamless flow.
+**Action:** Move result-dependent actions out of sidebars and into the main content flow, directly adjacent to the content they act upon.

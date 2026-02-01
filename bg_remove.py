@@ -8,13 +8,13 @@ import os
 import traceback
 import time
 
-st.set_page_config(layout="wide", page_title="Image Background Remover")
+st.set_page_config(layout="wide", page_title="Image Background Remover", page_icon="✂️")
 
 st.title("Remove background from your image")
 st.write(
-    ":dog: Try uploading an image to watch the background magically removed. Full quality images can be downloaded from the sidebar. This code is open source and available [here](https://github.com/tyler-simons/BackgroundRemoval) on GitHub. Special thanks to the [rembg library](https://github.com/danielgatis/rembg) :grin:"
+    ":dog: Try uploading an image to watch the background magically removed. Full quality images can be downloaded below the result. This code is open source and available [here](https://github.com/tyler-simons/BackgroundRemoval) on GitHub. Special thanks to the [rembg library](https://github.com/danielgatis/rembg) :grin:"
 )
-st.sidebar.header("Upload and download :gear:")
+st.sidebar.header("Upload Image :gear:")
 
 # Increased file size limit
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
@@ -59,7 +59,9 @@ def process_image(image_bytes):
         # Security: Enforce strict format validation
         # PIL detects the format based on the file header, not extension
         if image.format not in ["JPEG", "PNG"]:
-            print(f"Security Warning: Unsupported image format detected: {image.format}")
+            print(
+                f"Security Warning: Unsupported image format detected: {image.format}"
+            )
             st.error("Unsupported image format. Please upload a PNG or JPEG image.")
             return None, None
 
@@ -125,13 +127,15 @@ def fix_image(upload):
         col2.image(fixed)
 
         # Prepare download button
-        st.sidebar.markdown("\n")
-        st.sidebar.download_button(
+        col2.markdown("\n")
+        col2.download_button(
             "Download fixed image",
             convert_image(fixed),
             "fixed.png",
             "image/png",
             help="Download the processed image with transparent background",
+            use_container_width=True,
+            key="download_fixed",
         )
 
         progress_bar.progress(100)
