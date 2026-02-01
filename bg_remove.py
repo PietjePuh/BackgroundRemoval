@@ -50,7 +50,7 @@ def resize_image(image, max_size):
     return image.resize((new_width, new_height), Image.BICUBIC)
 
 
-@st.cache_data
+@st.cache_data(max_entries=10, ttl=3600)
 def process_image(image_bytes):
     """Process image with caching to avoid redundant processing"""
     try:

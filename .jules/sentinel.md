@@ -12,3 +12,8 @@
 **Vulnerability:** The application used `Image.LANCZOS` for resizing user-uploaded images. This filter is computationally expensive and scales poorly with image complexity, making it a vector for Denial of Service (DoS) attacks via CPU exhaustion.
 **Learning:** High-quality image processing filters (like LANCZOS) often come with a significant performance cost that can be exploited in public-facing applications.
 **Prevention:** Use `Image.BICUBIC` or `Image.BILINEAR` for resizing user content where strict fidelity is secondary to availability. Explicitly handle `Image.DecompressionBombError` to gracefully reject excessively large images.
+
+## 2026-02-18 - [Unbounded Cache Growth via st.cache_data]
+**Vulnerability:** The application used `@st.cache_data` without `max_entries` or `ttl`. This allows an attacker to exhaust server memory by uploading unique images, as each processed result is cached indefinitely.
+**Learning:** Streamlit's caching defaults prioritize convenience over security. In production, unbounded caches are a Denial of Service (DoS) vector.
+**Prevention:** Explicitly configure `max_entries` and `ttl` (Time To Live) on all Streamlit cache decorators to enforce resource boundaries.
