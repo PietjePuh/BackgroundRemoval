@@ -129,12 +129,13 @@ def fix_image(upload):
         # Prepare download button
         col2.markdown("\n")
         col2.download_button(
-            "Download fixed image",
+            "📥 Download fixed image",
             convert_image(fixed),
             "fixed.png",
             "image/png",
             help="Download the processed image with transparent background",
             use_container_width=True,
+            type="primary",
             key="download_fixed",
         )
 
