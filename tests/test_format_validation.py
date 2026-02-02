@@ -20,6 +20,11 @@ sys.modules['rembg'] = MagicMock()
 sys.modules['numpy'] = MagicMock()
 
 mock_image_module = MagicMock()
+# Fix for catching DecompressionBombError which must be an Exception subclass
+class MockDecompressionBombError(Exception):
+    pass
+mock_image_module.DecompressionBombError = MockDecompressionBombError
+
 sys.modules['PIL'] = MagicMock()
 sys.modules['PIL'].Image = mock_image_module
 sys.modules['PIL.Image'] = mock_image_module
@@ -33,6 +38,8 @@ def test_process_image_validates_format_success():
     mock_img = MagicMock()
     mock_img.format = "PNG"
     mock_img.size = (100, 100)
+    mock_img.width = 100
+    mock_img.height = 100
     # Mock resize to return the image itself (or another mock)
     mock_img.resize.return_value = mock_img
 
@@ -48,6 +55,8 @@ def test_process_image_rejects_invalid_format():
     mock_img = MagicMock()
     mock_img.format = "GIF"
     mock_img.size = (100, 100)
+    mock_img.width = 100
+    mock_img.height = 100
 
     with patch.object(bg_remove.Image, "open", return_value=mock_img):
         with patch.object(bg_remove.st, "error") as mock_error:

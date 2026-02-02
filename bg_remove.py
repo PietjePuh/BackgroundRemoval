@@ -3,7 +3,6 @@ from rembg import remove
 from PIL import Image
 import numpy as np
 from io import BytesIO
-import base64
 import os
 import traceback
 import time
@@ -18,6 +17,9 @@ st.sidebar.header("Upload Image :gear:")
 
 # Increased file size limit
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+
+# Maximum allowed source dimensions to prevent DoS via resizing
+MAX_SOURCE_DIMENSION = 6000
 
 # Max dimensions for processing
 MAX_IMAGE_SIZE = 2000  # pixels
@@ -63,6 +65,16 @@ def process_image(image_bytes):
                 f"Security Warning: Unsupported image format detected: {image.format}"
             )
             st.error("Unsupported image format. Please upload a PNG or JPEG image.")
+            return None, None
+
+        # Security: Check dimensions to prevent DoS via resizing
+        if image.width > MAX_SOURCE_DIMENSION or image.height > MAX_SOURCE_DIMENSION:
+            print(
+                f"Security Warning: Image dimensions too large: {image.size}"
+            )
+            st.error(
+                f"Image is too large in dimensions. Max allowed: {MAX_SOURCE_DIMENSION}x{MAX_SOURCE_DIMENSION}"
+            )
             return None, None
 
         # Resize large images to prevent memory issues
