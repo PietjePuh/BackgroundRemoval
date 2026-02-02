@@ -17,3 +17,8 @@
 **Vulnerability:** The application used `@st.cache_data` without `max_entries` or `ttl`. This allows an attacker to exhaust server memory by uploading unique images, as each processed result is cached indefinitely.
 **Learning:** Streamlit's caching defaults prioritize convenience over security. In production, unbounded caches are a Denial of Service (DoS) vector.
 **Prevention:** Explicitly configure `max_entries` and `ttl` (Time To Live) on all Streamlit cache decorators to enforce resource boundaries.
+
+## 2026-03-05 - [DoS via Large Image Dimensions]
+**Vulnerability:** The application relied on `Image.DecompressionBombError` (default limit ~89MP) and file size limits (10MB) but allowed resizing of images with large dimensions (e.g. 100MP). Resizing extremely large images to the target size (2000px) using `Image.BICUBIC` consumes excessive CPU, leading to DoS.
+**Learning:** File size limits are insufficient for DoS protection against compressed images (e.g., solid color PNGs). `Image.open` is lazy, allowing dimension checks before pixel loading.
+**Prevention:** Implement an explicit check for maximum source dimensions (e.g., width/height > 6000) immediately after opening the image header and before any processing or resizing operations.
