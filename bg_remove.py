@@ -69,9 +69,7 @@ def process_image(image_bytes):
 
         # Security: Check dimensions to prevent DoS via resizing
         if image.width > MAX_SOURCE_DIMENSION or image.height > MAX_SOURCE_DIMENSION:
-            print(
-                f"Security Warning: Image dimensions too large: {image.size}"
-            )
+            print(f"Security Warning: Image dimensions too large: {image.size}")
             st.error(
                 f"Image is too large in dimensions. Max allowed: {MAX_SOURCE_DIMENSION}x{MAX_SOURCE_DIMENSION}"
             )
@@ -133,10 +131,15 @@ def fix_image(upload):
 
         # Display images
         col1.subheader("Original Image :camera:")
-        col1.image(image)
+        col1.image(image, use_container_width=True)
 
         col2.subheader("Fixed Image :wrench:")
-        col2.image(fixed)
+        col2.image(fixed, use_container_width=True)
+
+        if isinstance(upload, str):
+            col2.caption(
+                "💡 This is a sample result. Upload your own image in the sidebar!"
+            )
 
         # Prepare download button
         col2.markdown("\n")

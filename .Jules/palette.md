@@ -9,3 +9,7 @@
 ## 2025-05-24 - Action Proximity in Mobile Layouts
 **Learning:** Placing primary actions (like 'Download') in a collapsible sidebar creates friction for mobile users who must toggle the menu to proceed. Co-locating the next logical action with the result (e.g., button below the image) creates a seamless flow.
 **Action:** Move result-dependent actions out of sidebars and into the main content flow, directly adjacent to the content they act upon.
+
+## 2025-05-25 - Default State Clarity
+**Learning:** When an app pre-loads content (like a sample image), users can be confused if it's their data or a demo. Explicitly labeling sample content reduces confusion and guides the next action.
+**Action:** Always label default/demo content with a caption or banner explaining it's a sample and how to replace it.
