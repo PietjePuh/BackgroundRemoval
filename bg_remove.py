@@ -32,6 +32,24 @@ MAX_IMAGE_SIZE = 2000  # pixels
 DEFAULT_IMAGES = ["./zebra.jpg", "./wallaby.png"]
 
 
+def check_rate_limit():
+    """Rate limiting to prevent DoS via repeated processing"""
+    if "request_times" not in st.session_state:
+        st.session_state["request_times"] = []
+
+    now = time.time()
+    # Clean up old requests (1 minute window)
+    st.session_state["request_times"] = [
+        t for t in st.session_state["request_times"] if now - t < 60
+    ]
+
+    if len(st.session_state["request_times"]) >= 5:  # Limit: 5 per minute
+        return False
+
+    st.session_state["request_times"].append(now)
+    return True
+
+
 # Download the fixed image
 def convert_image(img):
     buf = BytesIO()
@@ -194,6 +212,19 @@ if my_upload is not None:
             f"The uploaded file is too large. Please upload an image smaller than {MAX_FILE_SIZE/1024/1024:.1f}MB."
         )
     else:
+        # Check rate limit for new uploads
+        file_id = f"{my_upload.name}-{my_upload.size}"
+        if (
+            "last_upload_id" not in st.session_state
+            or st.session_state["last_upload_id"] != file_id
+        ):
+            if not check_rate_limit():
+                st.error(
+                    "Rate limit exceeded. Please wait a minute before processing another image."
+                )
+                st.stop()
+            st.session_state["last_upload_id"] = file_id
+
         fix_image(upload=my_upload)
 else:
     # Try default images in order of preference
