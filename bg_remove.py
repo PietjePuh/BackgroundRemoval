@@ -11,9 +11,13 @@ st.set_page_config(layout="wide", page_title="Image Background Remover", page_ic
 
 st.title("Remove background from your image")
 st.write(
-    ":dog: Try uploading an image to watch the background magically removed. Full quality images can be downloaded below the result. This code is open source and available [here](https://github.com/PietjePuh/BackgroundRemoval) on GitHub. Special thanks to the [rembg library](https://github.com/danielgatis/rembg) :grin:"
+    "Try uploading an image to watch the background magically removed. Full quality images can be downloaded below the result."
 )
-st.sidebar.header("Upload Image :gear:")
+st.markdown(
+    "This code is open source and available [here](https://github.com/PietjePuh/BackgroundRemoval) on GitHub. Special thanks to the [rembg library](https://github.com/danielgatis/rembg).",
+    unsafe_allow_html=True,
+)
+st.sidebar.header("Upload Image")
 
 # Increased file size limit
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
@@ -133,7 +137,7 @@ def fix_image(upload):
         col1.subheader("Original Image :camera:")
         col1.image(image, use_container_width=True)
 
-        col2.subheader("Fixed Image :wrench:")
+        col2.subheader("Background Removed :sparkles:")
         col2.image(fixed, use_container_width=True)
 
         if isinstance(upload, str):
@@ -144,7 +148,7 @@ def fix_image(upload):
         # Prepare download button
         col2.markdown("\n")
         col2.download_button(
-            "📥 Download fixed image",
+            "📥 Download transparent image",
             convert_image(fixed),
             "fixed.png",
             "image/png",
