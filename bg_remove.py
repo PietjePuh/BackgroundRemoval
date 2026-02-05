@@ -145,7 +145,8 @@ def fix_image(upload):
         progress_bar.progress(30)
 
         # Process image (using cache if available)
-        image, fixed = process_image(image_bytes)
+        with st.spinner("🤖 Removing background..."):
+            image, fixed = process_image(image_bytes)
         if image is None or fixed is None:
             return
 
@@ -192,7 +193,7 @@ def fix_image(upload):
 # UI Layout
 col1, col2 = st.columns(2)
 my_upload = st.sidebar.file_uploader(
-    "Upload an image",
+    "Upload an image (max 10MB)",
     type=["png", "jpg", "jpeg"],
     help="Supported formats: PNG, JPG, JPEG. Maximum supported size: 10MB",
 )
