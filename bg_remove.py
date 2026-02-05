@@ -1,11 +1,10 @@
-import streamlit as st
-from rembg import remove
-from PIL import Image
-import numpy as np
-from io import BytesIO
 import os
 import traceback
 import time
+from io import BytesIO
+import streamlit as st
+from rembg import remove
+from PIL import Image
 
 st.set_page_config(layout="wide", page_title="Image Background Remover", page_icon="✂️")
 
@@ -14,8 +13,7 @@ st.write(
     "Try uploading an image to watch the background magically removed. Full quality images can be downloaded below the result."
 )
 st.markdown(
-    "This code is open source and available [here](https://github.com/PietjePuh/BackgroundRemoval) on GitHub. Special thanks to the [rembg library](https://github.com/danielgatis/rembg).",
-    unsafe_allow_html=True,
+    "This code is open source and available [here](https://github.com/PietjePuh/BackgroundRemoval) on GitHub. Special thanks to the [rembg library](https://github.com/danielgatis/rembg)."
 )
 st.sidebar.header("Upload Image")
 
