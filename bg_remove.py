@@ -1,18 +1,10 @@
-import streamlit as st
-from rembg import remove, new_session
-from PIL import Image
-import numpy as np
-from io import BytesIO
 import os
+import traceback
 import time
-import logging
-
-# Configure logging
-logging.basicConfig(
-    level=logging.ERROR,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+from io import BytesIO
+import streamlit as st
+from rembg import remove
+from PIL import Image
 
 st.set_page_config(layout="wide", page_title="Image Background Remover", page_icon="✂️")
 
@@ -21,8 +13,7 @@ st.write(
     "Try uploading an image to watch the background magically removed. Full quality images can be downloaded below the result."
 )
 st.markdown(
-    "This code is open source and available [here](https://github.com/PietjePuh/BackgroundRemoval) on GitHub. Special thanks to the [rembg library](https://github.com/danielgatis/rembg).",
-    unsafe_allow_html=True,
+    "This code is open source and available [here](https://github.com/PietjePuh/BackgroundRemoval) on GitHub. Special thanks to the [rembg library](https://github.com/danielgatis/rembg)."
 )
 st.sidebar.header("Upload Image")
 
@@ -58,7 +49,7 @@ def check_rate_limit():
 
 
 # Download the fixed image
-@st.cache_data(max_entries=10, ttl=3600)
+@st.cache_data
 def convert_image(img):
     buf = BytesIO()
     img.save(buf, format="PNG")
@@ -72,9 +63,6 @@ def resize_image(image, max_size):
     if width <= max_size and height <= max_size:
         return image
 
-    new_width = width
-    new_height = height
-
     if width > height:
         new_width = max_size
         new_height = int(height * (max_size / width))
@@ -83,11 +71,6 @@ def resize_image(image, max_size):
         new_width = int(width * (max_size / height))
 
     return image.resize((new_width, new_height), Image.BICUBIC)
-
-
-@st.cache_resource
-def get_session():
-    return new_session("u2net")
 
 
 @st.cache_data(max_entries=10, ttl=3600)
@@ -116,16 +99,15 @@ def process_image(image_bytes):
         # Resize large images to prevent memory issues
         resized = resize_image(image, MAX_IMAGE_SIZE)
         # Process the image
-        session = get_session()
-        fixed = remove(resized, session=session)
+        fixed = remove(resized)
         return image, fixed
     except Image.DecompressionBombError as e:
-        logger.error(f"Decompression Bomb Error: {e}")
+        print(f"Decompression Bomb Error: {e}")  # Log for security audit
         st.error("Image is too large to process.")
         return None, None
     except Exception as e:
-        st.error("Error processing image. Please try again.")
-        logger.error(f"Error in process_image: {str(e)}", exc_info=True)
+        print(f"Error processing image: {str(e)}")  # Log for debugging
+        st.error("An error occurred while processing the image. Please try again.")
         return None, None
 
 
@@ -153,28 +135,15 @@ def fix_image(upload):
                 return
             with open(upload, "rb") as f:
                 image_bytes = f.read()
-            original_filename = os.path.basename(upload)
         else:
             # Uploaded file
             image_bytes = upload.getvalue()
-            original_filename = upload.name
 
         status_text.text("Processing image...")
         progress_bar.progress(30)
 
-        # Determine filename for download
-        original_filename = "image"
-        if isinstance(upload, str):
-            original_filename = os.path.basename(upload)
-        elif hasattr(upload, "name"):
-            original_filename = upload.name
-
-        base_name, _ = os.path.splitext(original_filename)
-        download_filename = f"{base_name}_rmbg.png"
-
         # Process image (using cache if available)
-        with st.spinner("🤖 Removing background..."):
-            image, fixed = process_image(image_bytes)
+        image, fixed = process_image(image_bytes)
         if image is None or fixed is None:
             return
 
@@ -195,19 +164,11 @@ def fix_image(upload):
 
         # Prepare download button
         col2.markdown("\n")
-
-        # Create dynamic filename: photo.jpg -> photo_rmbg.png
-        filename_base = os.path.splitext(original_filename)[0]
-        output_filename = f"{filename_base}_rmbg.png"
-
         col2.download_button(
             "📥 Download transparent image",
             convert_image(fixed),
-            output_filename,
+            "fixed.png",
             "image/png",
-            help=f"Download {output_filename}",
-            file_name=download_filename,
-            mime="image/png",
             help="Download the processed image with transparent background",
             use_container_width=True,
             type="primary",
@@ -223,13 +184,13 @@ def fix_image(upload):
         st.error("An error occurred. Please try again.")
         st.sidebar.error("Failed to process image")
         # Log the full error for debugging
-        logger.error(f"Error in fix_image: {str(e)}", exc_info=True)
+        print(f"Error in fix_image: {traceback.format_exc()}")
 
 
 # UI Layout
 col1, col2 = st.columns(2)
 my_upload = st.sidebar.file_uploader(
-    "Upload an image (max 10MB)",
+    "Upload an image",
     type=["png", "jpg", "jpeg"],
     help="Supported formats: PNG, JPG, JPEG. Maximum supported size: 10MB",
 )
