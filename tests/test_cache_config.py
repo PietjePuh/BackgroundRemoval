@@ -11,12 +11,13 @@ def test_cache_configuration():
 
     # Mock streamlit BEFORE importing bg_remove
     mock_st = MagicMock()
-    # Mock sub-components used in bg_remove
     mock_st.columns.return_value = [MagicMock(), MagicMock()]
     mock_st.sidebar.file_uploader.return_value = None
 
     # Mock cache_data to inspect calls
     mock_st.cache_data = MagicMock()
+    # Ensure it returns a callable so it can act as a decorator
+    mock_st.cache_data.return_value = lambda func: func
 
     sys.modules['streamlit'] = mock_st
 
@@ -47,20 +48,25 @@ def test_cache_configuration():
     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
     import bg_remove
 
-    # Check if cache_data was called with the expected arguments
-    # We expect: st.cache_data(max_entries=10, ttl=3600)
+    # Verify that ALL calls to st.cache_data have limits.
+    # We expect 2 calls (process_image and convert_image).
 
-    found = False
+    assert len(mock_st.cache_data.mock_calls) >= 2, "Expected at least 2 cached functions"
+
     for call in mock_st.cache_data.mock_calls:
-        # call is (name, args, kwargs)
-        _, args, kwargs = call
-        if kwargs.get('max_entries') == 10 and kwargs.get('ttl') == 3600:
-            found = True
-            break
+        name, args, kwargs = call
 
-    if not found:
-        print("\nCalls to st.cache_data:")
-        for call in mock_st.cache_data.mock_calls:
-            print(call)
+        # Check for unbounded usage: @st.cache_data (without args) results in the function being passed as the first arg.
+        if args and (callable(args[0]) or hasattr(args[0], '__name__')):
+             pytest.fail(f"Unbounded cache usage detected! @st.cache_data used without arguments on {args[0]}")
 
-    assert found, "st.cache_data was not called with max_entries=10 and ttl=3600"
+        # Check that limits are present in kwargs
+        if not args:
+             if 'max_entries' not in kwargs:
+                 pytest.fail(f"Missing max_entries in cache config: {kwargs}")
+             if 'ttl' not in kwargs:
+                 pytest.fail(f"Missing ttl in cache config: {kwargs}")
+
+             # Specifically check the values match our policy
+             assert kwargs['max_entries'] == 10
+             assert kwargs['ttl'] == 3600

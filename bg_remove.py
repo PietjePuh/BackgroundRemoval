@@ -51,7 +51,7 @@ def check_rate_limit():
 
 
 # Download the fixed image
-@st.cache_data
+@st.cache_data(max_entries=10, ttl=3600)
 def convert_image(img):
     buf = BytesIO()
     img.save(buf, format="PNG")
