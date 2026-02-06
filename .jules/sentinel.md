@@ -22,3 +22,8 @@
 **Vulnerability:** The application relied on `Image.DecompressionBombError` (default limit ~89MP) and file size limits (10MB) but allowed resizing of images with large dimensions (e.g. 100MP). Resizing extremely large images to the target size (2000px) using `Image.BICUBIC` consumes excessive CPU, leading to DoS.
 **Learning:** File size limits are insufficient for DoS protection against compressed images (e.g., solid color PNGs). `Image.open` is lazy, allowing dimension checks before pixel loading.
 **Prevention:** Implement an explicit check for maximum source dimensions (e.g., width/height > 6000) immediately after opening the image header and before any processing or resizing operations.
+
+## 2026-03-06 - [DoS via Unbounded Cache on Helper Functions]
+**Vulnerability:** The helper function `convert_image` used `@st.cache_data` without `max_entries` or `ttl`. While the main processing function was protected, this secondary cached function could still be exploited to exhaust memory by triggering downloads for many unique images.
+**Learning:** Every cached function is a potential DoS vector. Limits must be applied universally, not just on the "heavy" functions.
+**Prevention:** Audit all usages of `@st.cache_data` and ensure `max_entries` and `ttl` are always defined.
