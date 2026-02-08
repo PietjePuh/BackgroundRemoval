@@ -1,5 +1,5 @@
 import streamlit as st
-from rembg import remove
+from rembg import remove, new_session
 from PIL import Image
 import numpy as np
 from io import BytesIO
@@ -72,6 +72,11 @@ def resize_image(image, max_size):
         new_height = max_size
         new_width = int(width * (max_size / height))
 
+@st.cache_resource
+def get_session():
+    return new_session("u2net")
+
+@st.cache_data
     return image.resize((new_width, new_height), Image.BICUBIC)
 
 
@@ -101,7 +106,8 @@ def process_image(image_bytes):
         # Resize large images to prevent memory issues
         resized = resize_image(image, MAX_IMAGE_SIZE)
         # Process the image
-        fixed = remove(resized)
+        session = get_session()
+        fixed = remove(resized, session=session)
         return image, fixed
     except Image.DecompressionBombError as e:
         print(f"Decompression Bomb Error: {e}")  # Log for security audit
