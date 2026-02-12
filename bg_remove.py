@@ -65,6 +65,9 @@ def resize_image(image, max_size):
     if width <= max_size and height <= max_size:
         return image
 
+    new_width = width
+    new_height = height
+
     if width > height:
         new_width = max_size
         new_height = int(height * (max_size / width))
@@ -72,12 +75,12 @@ def resize_image(image, max_size):
         new_height = max_size
         new_width = int(width * (max_size / height))
 
+    return image.resize((new_width, new_height), Image.BICUBIC)
+
+
 @st.cache_resource
 def get_session():
     return new_session("u2net")
-
-@st.cache_data
-    return image.resize((new_width, new_height), Image.BICUBIC)
 
 
 @st.cache_data(max_entries=10, ttl=3600)
@@ -150,6 +153,16 @@ def fix_image(upload):
         status_text.text("Processing image...")
         progress_bar.progress(30)
 
+        # Determine filename for download
+        original_filename = "image"
+        if isinstance(upload, str):
+            original_filename = os.path.basename(upload)
+        elif hasattr(upload, "name"):
+            original_filename = upload.name
+
+        base_name, _ = os.path.splitext(original_filename)
+        download_filename = f"{base_name}_rmbg.png"
+
         # Process image (using cache if available)
         image, fixed = process_image(image_bytes)
         if image is None or fixed is None:
@@ -175,8 +188,8 @@ def fix_image(upload):
         col2.download_button(
             "📥 Download transparent image",
             convert_image(fixed),
-            "fixed.png",
-            "image/png",
+            file_name=download_filename,
+            mime="image/png",
             help="Download the processed image with transparent background",
             use_container_width=True,
             type="primary",
