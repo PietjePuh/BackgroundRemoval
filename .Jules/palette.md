@@ -13,3 +13,7 @@
 ## 2025-05-25 - Default State Clarity
 **Learning:** When an app pre-loads content (like a sample image), users can be confused if it's their data or a demo. Explicitly labeling sample content reduces confusion and guides the next action.
 **Action:** Always label default/demo content with a caption or banner explaining it's a sample and how to replace it.
+
+## 2026-02-13 - Dynamic Filenames Improve Workflow
+**Learning:** Static download filenames (like 'fixed.png') force users to manually rename files, creating friction for batch processing. Preserving the original name context (e.g., 'photo_rmbg.png') feels more thoughtful and organized.
+**Action:** Always derive download filenames from the input source to maintain context and improve file management.
