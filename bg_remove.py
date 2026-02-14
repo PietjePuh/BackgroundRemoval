@@ -4,8 +4,15 @@ from PIL import Image
 import numpy as np
 from io import BytesIO
 import os
-import traceback
 import time
+import logging
+
+# Configure logging
+logging.basicConfig(
+    level=logging.ERROR,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 st.set_page_config(layout="wide", page_title="Image Background Remover", page_icon="✂️")
 
@@ -65,6 +72,9 @@ def resize_image(image, max_size):
     if width <= max_size and height <= max_size:
         return image
 
+    new_width = width
+    new_height = height
+
     if width > height:
         new_width = max_size
         new_height = int(height * (max_size / width))
@@ -110,12 +120,12 @@ def process_image(image_bytes):
         fixed = remove(resized, session=session)
         return image, fixed
     except Image.DecompressionBombError as e:
-        print(f"Decompression Bomb Error: {e}")  # Log for security audit
+        logger.error(f"Decompression Bomb Error: {e}")
         st.error("Image is too large to process.")
         return None, None
     except Exception as e:
-        print(f"Error processing image: {str(e)}")  # Log for debugging
-        st.error("An error occurred while processing the image. Please try again.")
+        st.error("Error processing image. Please try again.")
+        logger.error(f"Error in process_image: {str(e)}", exc_info=True)
         return None, None
 
 
@@ -152,6 +162,16 @@ def fix_image(upload):
         status_text.text("Processing image...")
         progress_bar.progress(30)
 
+        # Determine filename for download
+        original_filename = "image"
+        if isinstance(upload, str):
+            original_filename = os.path.basename(upload)
+        elif hasattr(upload, "name"):
+            original_filename = upload.name
+
+        base_name, _ = os.path.splitext(original_filename)
+        download_filename = f"{base_name}_rmbg.png"
+
         # Process image (using cache if available)
         image, fixed = process_image(image_bytes)
         if image is None or fixed is None:
@@ -185,6 +205,9 @@ def fix_image(upload):
             output_filename,
             "image/png",
             help=f"Download {output_filename}",
+            file_name=download_filename,
+            mime="image/png",
+            help="Download the processed image with transparent background",
             use_container_width=True,
             type="primary",
             key="download_fixed",
@@ -199,7 +222,7 @@ def fix_image(upload):
         st.error("An error occurred. Please try again.")
         st.sidebar.error("Failed to process image")
         # Log the full error for debugging
-        print(f"Error in fix_image: {traceback.format_exc()}")
+        logger.error(f"Error in fix_image: {str(e)}", exc_info=True)
 
 
 # UI Layout
