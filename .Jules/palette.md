@@ -13,3 +13,7 @@
 ## 2025-05-25 - Default State Clarity
 **Learning:** When an app pre-loads content (like a sample image), users can be confused if it's their data or a demo. Explicitly labeling sample content reduces confusion and guides the next action.
 **Action:** Always label default/demo content with a caption or banner explaining it's a sample and how to replace it.
+
+## 2025-05-26 - Smart Filenames Preserve Context
+**Learning:** Generic filenames (e.g., `fixed.png`) force users to rename files or lose track of their origin, especially when processing multiple items. Deriving the output name from the input (e.g., `zebra_rmbg.png`) removes this friction.
+**Action:** Always attempt to derive output filenames from input filenames, appending a clear suffix for the operation performed.
