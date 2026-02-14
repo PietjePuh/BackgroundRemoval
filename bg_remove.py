@@ -153,9 +153,11 @@ def fix_image(upload):
                 return
             with open(upload, "rb") as f:
                 image_bytes = f.read()
+            original_filename = os.path.basename(upload)
         else:
             # Uploaded file
             image_bytes = upload.getvalue()
+            original_filename = upload.name
 
         status_text.text("Processing image...")
         progress_bar.progress(30)
@@ -192,9 +194,17 @@ def fix_image(upload):
 
         # Prepare download button
         col2.markdown("\n")
+
+        # Create dynamic filename: photo.jpg -> photo_rmbg.png
+        filename_base = os.path.splitext(original_filename)[0]
+        output_filename = f"{filename_base}_rmbg.png"
+
         col2.download_button(
             "📥 Download transparent image",
             convert_image(fixed),
+            output_filename,
+            "image/png",
+            help=f"Download {output_filename}",
             file_name=download_filename,
             mime="image/png",
             help="Download the processed image with transparent background",
