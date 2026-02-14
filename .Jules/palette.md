@@ -13,3 +13,7 @@
 ## 2025-05-25 - Default State Clarity
 **Learning:** When an app pre-loads content (like a sample image), users can be confused if it's their data or a demo. Explicitly labeling sample content reduces confusion and guides the next action.
 **Action:** Always label default/demo content with a caption or banner explaining it's a sample and how to replace it.
+
+## 2025-05-26 - Zero-Interaction Constraints
+**Learning:** Tooltips require user interaction (hover/tap), which can be missed, especially on mobile. Placing critical constraints (like "max 10MB") directly in the widget label ensures they are seen immediately without effort.
+**Action:** Move essential constraints from `help` tooltips directly into the input label text.

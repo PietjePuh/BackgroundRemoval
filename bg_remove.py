@@ -192,7 +192,7 @@ def fix_image(upload):
 # UI Layout
 col1, col2 = st.columns(2)
 my_upload = st.sidebar.file_uploader(
-    "Upload an image",
+    "Upload an image (max 10MB)",
     type=["png", "jpg", "jpeg"],
     help="Supported formats: PNG, JPG, JPEG. Maximum supported size: 10MB",
 )
