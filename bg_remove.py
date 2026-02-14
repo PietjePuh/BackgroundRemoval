@@ -4,8 +4,15 @@ from PIL import Image
 import numpy as np
 from io import BytesIO
 import os
-import traceback
 import time
+import logging
+
+# Configure logging
+logging.basicConfig(
+    level=logging.ERROR,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 st.set_page_config(layout="wide", page_title="Image Background Remover", page_icon="✂️")
 
@@ -113,12 +120,12 @@ def process_image(image_bytes):
         fixed = remove(resized, session=session)
         return image, fixed
     except Image.DecompressionBombError as e:
-        print(f"Decompression Bomb Error: {e}")  # Log for security audit
+        logger.error(f"Decompression Bomb Error: {e}")
         st.error("Image is too large to process.")
         return None, None
     except Exception as e:
-        print(f"Error processing image: {str(e)}")  # Log for debugging
-        st.error("An error occurred while processing the image. Please try again.")
+        st.error("Error processing image. Please try again.")
+        logger.error(f"Error in process_image: {str(e)}", exc_info=True)
         return None, None
 
 
@@ -205,7 +212,7 @@ def fix_image(upload):
         st.error("An error occurred. Please try again.")
         st.sidebar.error("Failed to process image")
         # Log the full error for debugging
-        print(f"Error in fix_image: {traceback.format_exc()}")
+        logger.error(f"Error in fix_image: {str(e)}", exc_info=True)
 
 
 # UI Layout
