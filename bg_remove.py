@@ -1,5 +1,5 @@
 import streamlit as st
-from rembg import remove
+from rembg import remove, new_session
 from PIL import Image
 import numpy as np
 from io import BytesIO
@@ -75,6 +75,11 @@ def resize_image(image, max_size):
     return image.resize((new_width, new_height), Image.BICUBIC)
 
 
+@st.cache_resource
+def get_session():
+    return new_session("u2net")
+
+
 @st.cache_data(max_entries=10, ttl=3600)
 def process_image(image_bytes):
     """Process image with caching to avoid redundant processing"""
@@ -101,7 +106,8 @@ def process_image(image_bytes):
         # Resize large images to prevent memory issues
         resized = resize_image(image, MAX_IMAGE_SIZE)
         # Process the image
-        fixed = remove(resized)
+        session = get_session()
+        fixed = remove(resized, session=session)
         return image, fixed
     except Image.DecompressionBombError as e:
         print(f"Decompression Bomb Error: {e}")  # Log for security audit
@@ -137,15 +143,18 @@ def fix_image(upload):
                 return
             with open(upload, "rb") as f:
                 image_bytes = f.read()
+            original_filename = os.path.basename(upload)
         else:
             # Uploaded file
             image_bytes = upload.getvalue()
+            original_filename = upload.name
 
         status_text.text("Processing image...")
         progress_bar.progress(30)
 
         # Process image (using cache if available)
-        image, fixed = process_image(image_bytes)
+        with st.spinner("🤖 Removing background..."):
+            image, fixed = process_image(image_bytes)
         if image is None or fixed is None:
             return
 
@@ -166,12 +175,17 @@ def fix_image(upload):
 
         # Prepare download button
         col2.markdown("\n")
+
+        # Create dynamic filename: photo.jpg -> photo_rmbg.png
+        filename_base = os.path.splitext(original_filename)[0]
+        output_filename = f"{filename_base}_rmbg.png"
+
         col2.download_button(
             "📥 Download transparent image",
             convert_image(fixed),
-            "fixed.png",
+            output_filename,
             "image/png",
-            help="Download the processed image with transparent background",
+            help=f"Download {output_filename}",
             use_container_width=True,
             type="primary",
             key="download_fixed",
@@ -192,7 +206,7 @@ def fix_image(upload):
 # UI Layout
 col1, col2 = st.columns(2)
 my_upload = st.sidebar.file_uploader(
-    "Upload an image",
+    "Upload an image (max 10MB)",
     type=["png", "jpg", "jpeg"],
     help="Supported formats: PNG, JPG, JPEG. Maximum supported size: 10MB",
 )
