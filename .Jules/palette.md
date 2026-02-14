@@ -14,10 +14,6 @@
 **Learning:** When an app pre-loads content (like a sample image), users can be confused if it's their data or a demo. Explicitly labeling sample content reduces confusion and guides the next action.
 **Action:** Always label default/demo content with a caption or banner explaining it's a sample and how to replace it.
 
-## 2025-05-26 - Cold Start Feedback
-**Learning:** The `rembg` model loading time (up to 300s) creates a significant 'dead air' period on first run. Standard timeouts fail. UI needs to handle this 'cold start' gracefully.
-**Action:** When implementing verification scripts or UI feedback for heavy ML models, assume extreme latency for the first run and provide persistent, non-blocking feedback.
-
-## 2025-05-26 - Inline Constraints in Labels
-**Learning:** Placing constraints (like 'max 10MB') in the label itself is more effective than help tooltips because it sets expectations *before* interaction.
-**Action:** Append critical constraints to the primary label of input widgets (e.g., "Upload (max 10MB)").
+## 2025-05-26 - Contextual Filenames
+**Learning:** Static filenames like 'fixed.png' force users to rename files manually, interrupting their workflow. Preserving the original context (e.g., 'photo_rmbg.png') feels like the tool is working *with* the user.
+**Action:** Always derive output filenames from input filenames where possible, appending a clear suffix for the operation performed.
