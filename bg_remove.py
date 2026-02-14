@@ -72,12 +72,12 @@ def resize_image(image, max_size):
         new_height = max_size
         new_width = int(width * (max_size / height))
 
+    return image.resize((new_width, new_height), Image.BICUBIC)
+
+
 @st.cache_resource
 def get_session():
     return new_session("u2net")
-
-@st.cache_data
-    return image.resize((new_width, new_height), Image.BICUBIC)
 
 
 @st.cache_data(max_entries=10, ttl=3600)
@@ -143,9 +143,11 @@ def fix_image(upload):
                 return
             with open(upload, "rb") as f:
                 image_bytes = f.read()
+            original_filename = os.path.basename(upload)
         else:
             # Uploaded file
             image_bytes = upload.getvalue()
+            original_filename = upload.name
 
         status_text.text("Processing image...")
         progress_bar.progress(30)
@@ -172,12 +174,17 @@ def fix_image(upload):
 
         # Prepare download button
         col2.markdown("\n")
+
+        # Create dynamic filename: photo.jpg -> photo_rmbg.png
+        filename_base = os.path.splitext(original_filename)[0]
+        output_filename = f"{filename_base}_rmbg.png"
+
         col2.download_button(
             "📥 Download transparent image",
             convert_image(fixed),
-            "fixed.png",
+            output_filename,
             "image/png",
-            help="Download the processed image with transparent background",
+            help=f"Download {output_filename}",
             use_container_width=True,
             type="primary",
             key="download_fixed",
