@@ -13,3 +13,11 @@
 ## 2025-05-25 - Default State Clarity
 **Learning:** When an app pre-loads content (like a sample image), users can be confused if it's their data or a demo. Explicitly labeling sample content reduces confusion and guides the next action.
 **Action:** Always label default/demo content with a caption or banner explaining it's a sample and how to replace it.
+
+## 2025-05-26 - Dynamic Filenames Reduce Friction
+**Learning:** Users dislike renaming files after download. Automatically appending context (like `_rmbg`) to the original filename creates a seamless workflow and saves user effort.
+**Action:** When offering file downloads, always attempt to derive a meaningful filename from the source input rather than using a static default.
+
+## 2025-05-26 - Test Isolation in Streamlit Apps
+**Learning:** Testing Streamlit apps that run on import is difficult when other tests mock `sys.modules`. Global state pollution causes cryptic failures in new tests.
+**Action:** Use `importlib.reload()` or robust fixture-based module patching/restoration when testing Streamlit scripts to ensure a clean state for each test file.
