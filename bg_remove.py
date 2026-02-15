@@ -14,8 +14,7 @@ st.write(
     "Try uploading an image to watch the background magically removed. Full quality images can be downloaded below the result."
 )
 st.markdown(
-    "This code is open source and available [here](https://github.com/PietjePuh/BackgroundRemoval) on GitHub. Special thanks to the [rembg library](https://github.com/danielgatis/rembg).",
-    unsafe_allow_html=True,
+    "This code is open source and available [here](https://github.com/PietjePuh/BackgroundRemoval) on GitHub. Special thanks to the [rembg library](https://github.com/danielgatis/rembg)."
 )
 st.sidebar.header("Upload Image")
 
@@ -51,7 +50,7 @@ def check_rate_limit():
 
 
 # Download the fixed image
-@st.cache_data
+@st.cache_data(max_entries=10, ttl=3600)
 def convert_image(img):
     buf = BytesIO()
     img.save(buf, format="PNG")
@@ -205,7 +204,7 @@ def fix_image(upload):
 # UI Layout
 col1, col2 = st.columns(2)
 my_upload = st.sidebar.file_uploader(
-    "Upload an image",
+    "Upload an image (max 10MB)",
     type=["png", "jpg", "jpeg"],
     help="Supported formats: PNG, JPG, JPEG. Maximum supported size: 10MB",
 )
