@@ -14,7 +14,7 @@ st.write(
     "Try uploading an image to watch the background magically removed. Full quality images can be downloaded below the result."
 )
 st.markdown(
-    "This code is open source and available [here](https://github.com/PietjePuh/BackgroundRemoval) on GitHub. Special thanks to the [rembg library](https://github.com/danielgatis/rembg).",
+    "This code is open source and available [here](https://github.com/PietjePuh/BackgroundRemoval) on GitHub. Special thanks to the [rembg library](https://github.com/danielgatis/rembg)."
 )
 st.sidebar.header("Upload Image")
 
