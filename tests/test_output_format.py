@@ -1,9 +1,6 @@
 """Tests for output format conversion logic."""
 
-import pytest
-from unittest.mock import MagicMock, patch, call
-from PIL import Image as RealImage
-from io import BytesIO
+from unittest.mock import MagicMock
 
 
 class TestConvertImageToFormat:

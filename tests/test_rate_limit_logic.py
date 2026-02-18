@@ -1,6 +1,5 @@
 """Tests for rate limiting logic."""
 
-import pytest
 import time
 from unittest.mock import patch
 

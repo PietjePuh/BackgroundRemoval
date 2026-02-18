@@ -1,6 +1,5 @@
 """Tests for file upload validation logic."""
 
-import pytest
 from unittest.mock import MagicMock, patch
 
 

@@ -1,6 +1,5 @@
 import sys
 from unittest.mock import MagicMock
-import pytest
 import os
 
 def test_no_unsafe_allow_html():
@@ -28,7 +27,7 @@ def test_no_unsafe_allow_html():
 
     # 3. Import the module
     sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/../'))
-    import bg_remove
+    import bg_remove  # noqa: F401
 
     # 4. Verify st.markdown calls
     # We expect st.markdown to be called.

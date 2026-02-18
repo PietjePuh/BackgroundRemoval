@@ -1,7 +1,6 @@
 import streamlit as st
 from rembg import remove, new_session
 from PIL import Image, ImageFilter
-import numpy as np
 from io import BytesIO
 import os
 import traceback

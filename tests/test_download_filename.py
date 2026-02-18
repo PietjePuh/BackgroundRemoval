@@ -1,8 +1,6 @@
 import sys
-from unittest.mock import MagicMock, patch, ANY
-import pytest
+from unittest.mock import MagicMock, patch
 import os
-import io
 
 # Clean up sys.modules to ensure we load bg_remove with OUR mocks
 keys_to_remove = [k for k in sys.modules if 'bg_remove' in k or 'PIL' in k or 'streamlit' in k or 'rembg' in k]
@@ -57,7 +55,7 @@ sys.modules['PIL.Image'] = mock_image_module
 
 # Import the module
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/../'))
-import bg_remove
+import bg_remove  # noqa: E402
 
 def test_download_filename_for_uploaded_file():
     """

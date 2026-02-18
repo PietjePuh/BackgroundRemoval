@@ -1,6 +1,5 @@
 """Tests for batch processing and ZIP archive creation."""
 
-import pytest
 import zipfile
 from io import BytesIO
 from unittest.mock import MagicMock, patch

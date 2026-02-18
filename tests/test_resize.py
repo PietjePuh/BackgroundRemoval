@@ -1,6 +1,5 @@
 """Tests for image resize logic."""
 
-import pytest
 from unittest.mock import MagicMock
 
 
@@ -25,7 +24,7 @@ class TestResizeImage:
         mock_img.size = (4000, 2000)
         mock_img.resize.return_value = MagicMock()
 
-        result = bg_remove.resize_image(mock_img, 2000)
+        bg_remove.resize_image(mock_img, 2000)
 
         mock_img.resize.assert_called_once()
         args, _ = mock_img.resize.call_args
@@ -40,7 +39,7 @@ class TestResizeImage:
         mock_img.size = (1000, 5000)
         mock_img.resize.return_value = MagicMock()
 
-        result = bg_remove.resize_image(mock_img, 2000)
+        bg_remove.resize_image(mock_img, 2000)
 
         mock_img.resize.assert_called_once()
         args, _ = mock_img.resize.call_args

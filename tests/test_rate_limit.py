@@ -25,7 +25,7 @@ sys.modules['PIL.Image'] = MagicMock()
 
 # Import the module
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/../'))
-import bg_remove
+import bg_remove  # noqa: E402
 
 def test_check_rate_limit_logic():
     """

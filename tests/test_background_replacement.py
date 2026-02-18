@@ -1,7 +1,6 @@
 """Tests for background replacement logic."""
 
-import pytest
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock
 
 
 class TestApplyBackgroundReplacement:
@@ -99,7 +98,7 @@ class TestApplyBackgroundReplacement:
         blurred_resized.filter.return_value = blurred_filtered
         blurred_filtered.convert.return_value = blurred_converted
 
-        result = bg_remove.apply_background_replacement(
+        bg_remove.apply_background_replacement(
             fixed_img=fixed_img,
             bg_mode="blur",
             bg_blur_radius=20,
@@ -129,7 +128,7 @@ class TestApplyBackgroundReplacement:
         custom_bg_copy.resize.return_value = custom_bg_resized
         custom_bg_resized.convert.return_value = custom_bg_converted
 
-        result = bg_remove.apply_background_replacement(
+        bg_remove.apply_background_replacement(
             fixed_img=fixed_img,
             bg_mode="custom_image",
             bg_custom_image=custom_bg,

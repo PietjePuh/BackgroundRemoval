@@ -1,6 +1,5 @@
 import sys
 from unittest.mock import MagicMock
-import pytest
 import os
 
 def test_file_uploader_label_contains_constraint():
@@ -30,7 +29,7 @@ def test_file_uploader_label_contains_constraint():
 
     # 3. Import the module
     sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/../'))
-    import bg_remove
+    import bg_remove  # noqa: F401
 
     # 4. Verify file_uploader label
     assert mock_st.sidebar.file_uploader.called
