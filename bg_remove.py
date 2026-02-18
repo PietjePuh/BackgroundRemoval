@@ -118,6 +118,15 @@ def process_image(image_bytes):
         return None, None
 
 
+def format_file_size(size_in_bytes):
+    if size_in_bytes < 1024:
+        return f"{size_in_bytes} B"
+    elif size_in_bytes < 1024 * 1024:
+        return f"{size_in_bytes / 1024:.1f} KB"
+    else:
+        return f"{size_in_bytes / (1024 * 1024):.1f} MB"
+
+
 def fix_image(upload):
     try:
         start_time = time.time()
@@ -178,12 +187,15 @@ def fix_image(upload):
         filename_base = os.path.splitext(original_filename)[0]
         output_filename = f"{filename_base}_rmbg.png"
 
+        result_image = convert_image(fixed)
+        size_str = format_file_size(len(result_image))
+
         col2.download_button(
-            "📥 Download transparent image",
-            convert_image(fixed),
+            f"📥 Download transparent image ({size_str})",
+            result_image,
             output_filename,
             "image/png",
-            help=f"Download {output_filename}",
+            help=f"Download {output_filename}\nSize: {size_str}\nResolution: {fixed.width}x{fixed.height}",
             use_container_width=True,
             type="primary",
             key="download_fixed",
