@@ -4,7 +4,11 @@ venv/
 elephant.jpg
 Pizigani_1367_Chart_10MB.jpg
 __pycache__/
+*.pyc
 *.log
+.pytest_cache/
+htmlcov/
+.coverage
 
 # Claude Code
 .claude/

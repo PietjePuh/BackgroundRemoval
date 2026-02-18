@@ -1,0 +1,16 @@
+.git
+.github
+.vscode
+.devcontainer
+.Jules
+.claude
+__pycache__
+*.pyc
+venv/
+.env
+tests/
+requirements-dev.txt
+*.md
+!README.md
+.gitignore
+.dockerignore
