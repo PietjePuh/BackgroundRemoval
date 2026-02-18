@@ -17,3 +17,7 @@
 ## 2025-05-26 - Contextual Filenames
 **Learning:** Static filenames like 'fixed.png' force users to rename files manually, interrupting their workflow. Preserving the original context (e.g., 'photo_rmbg.png') feels like the tool is working *with* the user.
 **Action:** Always derive output filenames from input filenames where possible, appending a clear suffix for the operation performed.
+
+## 2025-05-27 - Predictive Button Labels
+**Learning:** Users hesitate to download files without knowing the impact (size/dimensions). Adding metadata (e.g., "1.2 MB") directly to the primary action button reduces friction and builds trust by setting clear expectations before the click.
+**Action:** Enhance download buttons to include file size and/or dimensions in the label or tooltip whenever the data is available.
