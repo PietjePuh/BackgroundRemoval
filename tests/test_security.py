@@ -1,6 +1,5 @@
 import sys
 from unittest.mock import MagicMock, patch, mock_open
-import pytest
 import os
 
 # 1. Mock modules BEFORE importing bg_remove
@@ -16,7 +15,7 @@ sys.modules['numpy'] = MagicMock()
 
 # 2. Import the module
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/../'))
-import bg_remove
+import bg_remove  # noqa: E402
 
 def test_fix_image_blocks_arbitrary_file():
     """

@@ -1,6 +1,5 @@
 import sys
 from unittest.mock import MagicMock, patch
-import pytest
 import os
 
 # Clean up sys.modules to ensure we load bg_remove with OUR mocks
@@ -31,7 +30,7 @@ sys.modules['PIL.Image'] = mock_image_module
 
 # Import the module
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/../'))
-import bg_remove
+import bg_remove  # noqa: E402
 
 def test_process_image_validates_format_success():
     """Test that process_image accepts valid formats (PNG, JPEG)."""

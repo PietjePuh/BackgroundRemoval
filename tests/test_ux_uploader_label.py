@@ -30,7 +30,7 @@ def test_uploader_label_has_constraint():
 
     # 3. Import the module
     sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/../'))
-    import bg_remove
+    import bg_remove  # noqa: F401
 
     # 4. Verify file_uploader call
     assert mock_st.sidebar.file_uploader.called

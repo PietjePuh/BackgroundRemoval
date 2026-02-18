@@ -46,7 +46,7 @@ def test_cache_configuration():
 
     # Import the module
     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-    import bg_remove
+    import bg_remove  # noqa: F401
 
     # Verify that ALL calls to st.cache_data have limits.
     # We expect 2 calls (process_image and convert_image).
