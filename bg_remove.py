@@ -169,6 +169,16 @@ def process_image(image_bytes):
         return None, None
 
 
+def format_file_size(size_in_bytes):
+    """Format a file size in bytes to a human-readable string."""
+    if size_in_bytes < 1024:
+        return f"{size_in_bytes} B"
+    elif size_in_bytes < 1024 * 1024:
+        return f"{size_in_bytes / 1024:.1f} KB"
+    else:
+        return f"{size_in_bytes / (1024 * 1024):.1f} MB"
+
+
 def apply_background_replacement(fixed_img, bg_mode, bg_color=None, bg_blur_radius=15, bg_custom_image=None, original_img=None):
     """Apply background replacement to a processed (transparent) image.
 
@@ -332,12 +342,13 @@ def display_single_result(image, result, output_filename, result_bytes, output_f
         )
 
     col2.markdown("\n")
+    size_str = format_file_size(len(result_bytes))
     col2.download_button(
-        f"Download {output_format} image",
+        f"Download {output_format} image ({size_str})",
         result_bytes,
         output_filename,
         get_format_mime(output_format),
-        help=f"Download {output_filename}",
+        help=f"Download {output_filename}\nSize: {size_str}",
         use_container_width=True,
         type="primary",
         key=f"download_{key_suffix}",
@@ -366,8 +377,9 @@ def display_batch_results(results, output_format):
 
             col2.subheader("Result :sparkles:")
             col2.image(result, use_container_width=True)
+            size_str = format_file_size(len(result_bytes))
             col2.download_button(
-                f"Download {output_filename}",
+                f"Download {output_filename} ({size_str})",
                 result_bytes,
                 output_filename,
                 get_format_mime(output_format),
@@ -379,8 +391,9 @@ def display_batch_results(results, output_format):
     st.markdown("---")
     zip_data = [(filename, img_bytes) for _, _, filename, img_bytes in results]
     zip_bytes = create_zip_archive(zip_data)
+    zip_size_str = format_file_size(len(zip_bytes))
     st.download_button(
-        "Download All as ZIP",
+        f"Download All as ZIP ({zip_size_str})",
         zip_bytes,
         "background_removed_images.zip",
         "application/zip",
