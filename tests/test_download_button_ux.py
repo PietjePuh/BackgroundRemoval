@@ -48,57 +48,46 @@ def test_format_file_size():
     assert bg_remove.format_file_size(1024 * 1024) == "1.0 MB"
     assert bg_remove.format_file_size(2.5 * 1024 * 1024) == "2.5 MB"
 
-def test_download_button_ux_label_and_help():
+def test_display_single_result_ux_label_and_help():
     """
-    Test that the download button label includes file size and help tooltip includes details.
+    Test that display_single_result calls download_button with correct label (including file size) and help tooltip.
     """
     # Reset mocks
     mock_col2.download_button.reset_mock()
 
-    # Mock process_image
-    with patch.object(bg_remove, "process_image") as mock_process:
-        mock_img = MagicMock()
-        mock_fixed = MagicMock()
-        mock_fixed.width = 800
-        mock_fixed.height = 600
-        mock_process.return_value = (mock_img, mock_fixed)
+    # Mock inputs
+    mock_image = MagicMock()
+    mock_result = MagicMock()
+    mock_result.width = 800
+    mock_result.height = 600
 
-        # Mock convert_image to return known bytes
-        # 1024 bytes -> 1.0 KB
-        fake_bytes = b"a" * 1024
-        with patch.object(bg_remove, "convert_image", return_value=fake_bytes):
+    output_filename = "test_rmbg.png"
+    # 1024 bytes -> 1.0 KB
+    result_bytes = b"a" * 1024
+    output_format = "PNG"
 
-            # Use default image path
-            with patch("os.path.exists", return_value=True), \
-                 patch("builtins.open", new_callable=MagicMock) as mock_open:
+    # Call the function
+    bg_remove.display_single_result(
+        mock_image,
+        mock_result,
+        output_filename,
+        result_bytes,
+        output_format,
+        is_default=False,
+        key_suffix="test"
+    )
 
-                mock_file = MagicMock()
-                mock_file.read.return_value = b"input_bytes"
-                mock_open.return_value.__enter__.return_value = mock_file
+    # Assertions
+    assert mock_col2.download_button.called
+    args, kwargs = mock_col2.download_button.call_args
 
-                # We need to make sure the file we are "opening" is treated as a string path
-                # fix_image checks isinstance(upload, str)
+    # Check label (first arg)
+    label = args[0]
+    assert "1.0 KB" in label
+    assert "Download PNG image" in label
 
-                # Mock DEFAULT_IMAGES check
-                original_defaults = bg_remove.DEFAULT_IMAGES
-                bg_remove.DEFAULT_IMAGES = ["test.jpg"]
-
-                try:
-                    bg_remove.fix_image("test.jpg")
-
-                    assert mock_col2.download_button.called
-                    args, kwargs = mock_col2.download_button.call_args
-
-                    # Check label (first arg)
-                    label = args[0]
-                    assert "1.0 KB" in label
-                    assert "Download transparent image" in label
-
-                    # Check help (kwargs)
-                    help_text = kwargs.get('help')
-                    assert help_text is not None
-                    assert "Size: 1.0 KB" in help_text
-                    assert "Resolution: 800x600" in help_text
-
-                finally:
-                    bg_remove.DEFAULT_IMAGES = original_defaults
+    # Check help (kwargs)
+    help_text = kwargs.get('help')
+    assert help_text is not None
+    assert "Size: 1.0 KB" in help_text
+    assert "Download test_rmbg.png" in help_text

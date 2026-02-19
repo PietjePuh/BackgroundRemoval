@@ -61,9 +61,6 @@ def test_download_filename_for_uploaded_file():
     """
     Test that the download button gets a dynamic filename based on the uploaded file name.
     """
-    # Reset mocks
-    mock_col2.download_button.reset_mock()
-
     # Create a mock uploaded file
     mock_upload = MagicMock()
     mock_upload.name = "my_cool_photo.jpg"
@@ -71,31 +68,18 @@ def test_download_filename_for_uploaded_file():
     mock_upload.size = 1024
 
     # Call fix_image directly
-    bg_remove.fix_image(mock_upload)
+    result = bg_remove.fix_image(mock_upload)
 
-    # Assert download_button was called
-    # We expect the 3rd argument to be 'my_cool_photo_rmbg.png'
-    # or passed as file_name kwarg
+    # Assert result
+    assert result is not None
+    original, processed, filename, bytes_data = result
 
-    assert mock_col2.download_button.called, "download_button should be called"
-
-    args, kwargs = mock_col2.download_button.call_args
-    # Check if 'file_name' is in kwargs or position 2
-    if 'file_name' in kwargs:
-        actual_filename = kwargs['file_name']
-    else:
-        # 1st arg: label, 2nd: data, 3rd: file_name
-        actual_filename = args[2]
-
-    assert actual_filename == "my_cool_photo_rmbg.png"
+    assert filename == "my_cool_photo_rmbg.png"
 
 def test_download_filename_for_default_image():
     """
     Test that the download button gets a dynamic filename based on the default image path.
     """
-    # Reset mocks
-    mock_col2.download_button.reset_mock()
-
     # Mock os.path.exists and open to handle the default image path
     with patch("os.path.exists", return_value=True), \
          patch("builtins.open", new_callable=MagicMock) as mock_open:
@@ -110,14 +94,9 @@ def test_download_filename_for_default_image():
         if test_path not in bg_remove.DEFAULT_IMAGES:
             bg_remove.DEFAULT_IMAGES.append(test_path)
 
-        bg_remove.fix_image(test_path)
+        result = bg_remove.fix_image(test_path)
 
-        assert mock_col2.download_button.called, "download_button should be called"
+        assert result is not None
+        original, processed, filename, bytes_data = result
 
-        args, kwargs = mock_col2.download_button.call_args
-        if 'file_name' in kwargs:
-            actual_filename = kwargs['file_name']
-        else:
-            actual_filename = args[2]
-
-        assert actual_filename == "zebra_rmbg.png"
+        assert filename == "zebra_rmbg.png"

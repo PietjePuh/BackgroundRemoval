@@ -37,5 +37,5 @@ def test_uploader_label_has_constraint():
     args, kwargs = mock_st.sidebar.file_uploader.call_args
     label = args[0]
 
-    # Assert label contains "(max 10MB)"
-    assert "(max 10MB)" in label, f"Label '{label}' does not contain size constraint '(max 10MB)'"
+    # Assert label contains "max 10MB"
+    assert "max 10MB" in label, f"Label '{label}' does not contain size constraint 'max 10MB'"

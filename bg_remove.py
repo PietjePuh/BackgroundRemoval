@@ -438,12 +438,15 @@ elif bg_mode == "blur":
     bg_blur_radius = st.sidebar.slider("Blur radius", 5, 50, 15, help="Higher values create a more blurred background")
 elif bg_mode == "custom_image":
     bg_upload = st.sidebar.file_uploader(
-        "Upload background image",
+        "Upload background image (max 10MB)",
         type=["png", "jpg", "jpeg"],
         key="bg_image_uploader",
+        help="Supported formats: PNG, JPG, JPEG. Maximum: 10MB.",
     )
     if bg_upload is not None:
         bg_custom_image = Image.open(bg_upload)
+    else:
+        st.sidebar.info("Please upload a background image to see the effect.")
 
 # File uploader (batch mode)
 st.sidebar.markdown("---")
