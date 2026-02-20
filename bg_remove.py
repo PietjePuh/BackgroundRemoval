@@ -179,6 +179,20 @@ def format_file_size(size_in_bytes):
         return f"{size_in_bytes / (1024 * 1024):.1f} MB"
 
 
+def render_custom_background_uploader():
+    """Render the custom background uploader and return the uploaded image."""
+    bg_upload = st.sidebar.file_uploader(
+        "Upload background image (PNG, JPG)",
+        type=["png", "jpg", "jpeg"],
+        key="bg_image_uploader",
+    )
+    if bg_upload is not None:
+        return Image.open(bg_upload)
+    else:
+        st.sidebar.info("Upload an image to use as background.")
+        return None
+
+
 def apply_background_replacement(fixed_img, bg_mode, bg_color=None, bg_blur_radius=15, bg_custom_image=None, original_img=None):
     """Apply background replacement to a processed (transparent) image.
 
@@ -437,13 +451,7 @@ if bg_mode == "solid_color":
 elif bg_mode == "blur":
     bg_blur_radius = st.sidebar.slider("Blur radius", 5, 50, 15, help="Higher values create a more blurred background")
 elif bg_mode == "custom_image":
-    bg_upload = st.sidebar.file_uploader(
-        "Upload background image",
-        type=["png", "jpg", "jpeg"],
-        key="bg_image_uploader",
-    )
-    if bg_upload is not None:
-        bg_custom_image = Image.open(bg_upload)
+    bg_custom_image = render_custom_background_uploader()
 
 # File uploader (batch mode)
 st.sidebar.markdown("---")

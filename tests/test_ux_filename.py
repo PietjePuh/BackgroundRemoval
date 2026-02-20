@@ -44,8 +44,8 @@ def test_fix_image_filename_string():
         mock_fixed = MagicMock()
         mock_process.return_value = (mock_img, mock_fixed)
 
-        # Mock convert_image
-        with patch.object(bg_remove, "convert_image", return_value=b"fake_bytes"):
+        # Mock convert_image_to_format
+        with patch.object(bg_remove, "convert_image_to_format", return_value=b"fake_bytes"):
             # Mock os.path.exists to allow default image check
             with patch("os.path.exists", return_value=True):
                 # Mock builtins.open
@@ -57,22 +57,11 @@ def test_fix_image_filename_string():
                     bg_remove.DEFAULT_IMAGES = ["test_image.jpg"]
 
                     try:
-                        bg_remove.fix_image("test_image.jpg")
+                        result_tuple = bg_remove.fix_image("test_image.jpg")
+                        assert result_tuple is not None
 
-                        # Check download button call
-                        # Arguments: label, data, file_name, mime, ...
-                        # We look for file_name
-                        assert mock_col2.download_button.called
-                        args, kwargs = mock_col2.download_button.call_args
-
-                        # Check file_name argument (positional or keyword)
-                        # signature: download_button(label, data, file_name=None, mime=None, ...)
-                        # In code: download_button("...", convert_image(fixed), "fixed.png", "image/png", ...)
-                        # So file_name is likely the 3rd positional arg
-
-                        actual_filename = kwargs.get('file_name')
-                        if actual_filename is None and len(args) > 2:
-                            actual_filename = args[2]
+                        # Unpack return values
+                        _, _, actual_filename, _ = result_tuple
 
                         # NEW BEHAVIOR: expects dynamic filename
                         assert actual_filename == "test_image_rmbg.png"
@@ -88,21 +77,18 @@ def test_fix_image_filename_uploaded_file():
         mock_fixed = MagicMock()
         mock_process.return_value = (mock_img, mock_fixed)
 
-        with patch.object(bg_remove, "convert_image", return_value=b"fake_bytes"):
+        with patch.object(bg_remove, "convert_image_to_format", return_value=b"fake_bytes"):
             # Mock UploadedFile
             mock_upload = MagicMock()
             mock_upload.name = "my_upload.jpg"
             mock_upload.getvalue.return_value = b"bytes"
             # It needs to not be a string
 
-            bg_remove.fix_image(mock_upload)
+            result_tuple = bg_remove.fix_image(mock_upload)
+            assert result_tuple is not None
 
-            assert mock_col2.download_button.called
-            args, kwargs = mock_col2.download_button.call_args
-
-            actual_filename = kwargs.get('file_name')
-            if actual_filename is None and len(args) > 2:
-                actual_filename = args[2]
+            # Unpack return values
+            _, _, actual_filename, _ = result_tuple
 
             # NEW BEHAVIOR: expects dynamic filename
             assert actual_filename == "my_upload_rmbg.png"

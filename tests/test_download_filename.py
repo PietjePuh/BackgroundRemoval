@@ -71,21 +71,13 @@ def test_download_filename_for_uploaded_file():
     mock_upload.size = 1024
 
     # Call fix_image directly
-    bg_remove.fix_image(mock_upload)
+    result_tuple = bg_remove.fix_image(mock_upload)
 
-    # Assert download_button was called
-    # We expect the 3rd argument to be 'my_cool_photo_rmbg.png'
-    # or passed as file_name kwarg
+    # Assert result is not None
+    assert result_tuple is not None, "fix_image returned None"
 
-    assert mock_col2.download_button.called, "download_button should be called"
-
-    args, kwargs = mock_col2.download_button.call_args
-    # Check if 'file_name' is in kwargs or position 2
-    if 'file_name' in kwargs:
-        actual_filename = kwargs['file_name']
-    else:
-        # 1st arg: label, 2nd: data, 3rd: file_name
-        actual_filename = args[2]
+    # Unpack return values: (original_image, result_image, output_filename, result_bytes)
+    _, _, actual_filename, _ = result_tuple
 
     assert actual_filename == "my_cool_photo_rmbg.png"
 
@@ -110,14 +102,12 @@ def test_download_filename_for_default_image():
         if test_path not in bg_remove.DEFAULT_IMAGES:
             bg_remove.DEFAULT_IMAGES.append(test_path)
 
-        bg_remove.fix_image(test_path)
+        result_tuple = bg_remove.fix_image(test_path)
 
-        assert mock_col2.download_button.called, "download_button should be called"
+        # Assert result is not None
+        assert result_tuple is not None, "fix_image returned None"
 
-        args, kwargs = mock_col2.download_button.call_args
-        if 'file_name' in kwargs:
-            actual_filename = kwargs['file_name']
-        else:
-            actual_filename = args[2]
+        # Unpack return values
+        _, _, actual_filename, _ = result_tuple
 
         assert actual_filename == "zebra_rmbg.png"
