@@ -343,12 +343,13 @@ def display_single_result(image, result, output_filename, result_bytes, output_f
 
     col2.markdown("\n")
     size_str = format_file_size(len(result_bytes))
+    resolution_str = f"{result.width}x{result.height}"
     col2.download_button(
         f"Download {output_format} image ({size_str})",
         result_bytes,
         output_filename,
         get_format_mime(output_format),
-        help=f"Download {output_filename}\nSize: {size_str}",
+        help=f"Download {output_filename}\nSize: {size_str}\nResolution: {resolution_str}",
         use_container_width=True,
         type="primary",
         key=f"download_{key_suffix}",
@@ -397,6 +398,7 @@ def display_batch_results(results, output_format):
         zip_bytes,
         "background_removed_images.zip",
         "application/zip",
+        help=f"Download {len(results)} images as a ZIP archive\nTotal size: {zip_size_str}",
         use_container_width=True,
         type="primary",
         key="download_all_zip",
