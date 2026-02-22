@@ -57,7 +57,11 @@ def test_fix_image_filename_string():
                     bg_remove.DEFAULT_IMAGES = ["test_image.jpg"]
 
                     try:
-                        bg_remove.fix_image("test_image.jpg")
+                        result = bg_remove.fix_image("test_image.jpg")
+
+                        if result:
+                            image, processed, output_filename, result_bytes = result
+                            bg_remove.display_single_result(image, processed, output_filename, result_bytes, "PNG")
 
                         # Check download button call
                         # Arguments: label, data, file_name, mime, ...
@@ -95,7 +99,11 @@ def test_fix_image_filename_uploaded_file():
             mock_upload.getvalue.return_value = b"bytes"
             # It needs to not be a string
 
-            bg_remove.fix_image(mock_upload)
+            result = bg_remove.fix_image(mock_upload)
+
+            if result:
+                image, processed, output_filename, result_bytes = result
+                bg_remove.display_single_result(image, processed, output_filename, result_bytes, "PNG")
 
             assert mock_col2.download_button.called
             args, kwargs = mock_col2.download_button.call_args

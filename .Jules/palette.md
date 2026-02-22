@@ -21,3 +21,7 @@
 ## 2025-05-27 - Predictive Button Labels
 **Learning:** Users hesitate to download files without knowing the impact (size/dimensions). Adding metadata (e.g., "1.2 MB") directly to the primary action button reduces friction and builds trust by setting clear expectations before the click.
 **Action:** Enhance download buttons to include file size and/or dimensions in the label or tooltip whenever the data is available.
+
+## 2025-05-28 - Empty State Guidance
+**Learning:** When a user selects a mode that requires input (like 'Custom Image'), showing nothing or a default state can be confusing. Explicitly prompting the user with a call-to-action (e.g., "Upload an image") bridges the gap between selection and action.
+**Action:** Add informational messages or empty states for features that require user input to function, ensuring the next step is obvious.

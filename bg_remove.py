@@ -446,6 +446,8 @@ elif bg_mode == "custom_image":
     )
     if bg_upload is not None:
         bg_custom_image = Image.open(bg_upload)
+    else:
+        st.sidebar.info("👆 Upload an image to use as background")
 
 # File uploader (batch mode)
 st.sidebar.markdown("---")
