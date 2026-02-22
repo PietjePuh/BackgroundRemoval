@@ -71,7 +71,12 @@ def test_download_filename_for_uploaded_file():
     mock_upload.size = 1024
 
     # Call fix_image directly
-    bg_remove.fix_image(mock_upload)
+    result = bg_remove.fix_image(mock_upload)
+
+    # fix_image now returns a tuple, it does not call display_single_result itself
+    if result:
+        image, processed, output_filename, result_bytes = result
+        bg_remove.display_single_result(image, processed, output_filename, result_bytes, "PNG")
 
     # Assert download_button was called
     # We expect the 3rd argument to be 'my_cool_photo_rmbg.png'
@@ -110,7 +115,12 @@ def test_download_filename_for_default_image():
         if test_path not in bg_remove.DEFAULT_IMAGES:
             bg_remove.DEFAULT_IMAGES.append(test_path)
 
-        bg_remove.fix_image(test_path)
+        result = bg_remove.fix_image(test_path)
+
+        # fix_image now returns a tuple
+        if result:
+            image, processed, output_filename, result_bytes = result
+            bg_remove.display_single_result(image, processed, output_filename, result_bytes, "PNG")
 
         assert mock_col2.download_button.called, "download_button should be called"
 
