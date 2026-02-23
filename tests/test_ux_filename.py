@@ -57,22 +57,11 @@ def test_fix_image_filename_string():
                     bg_remove.DEFAULT_IMAGES = ["test_image.jpg"]
 
                     try:
-                        bg_remove.fix_image("test_image.jpg")
+                        result = bg_remove.fix_image("test_image.jpg")
 
-                        # Check download button call
-                        # Arguments: label, data, file_name, mime, ...
-                        # We look for file_name
-                        assert mock_col2.download_button.called
-                        args, kwargs = mock_col2.download_button.call_args
-
-                        # Check file_name argument (positional or keyword)
-                        # signature: download_button(label, data, file_name=None, mime=None, ...)
-                        # In code: download_button("...", convert_image(fixed), "fixed.png", "image/png", ...)
-                        # So file_name is likely the 3rd positional arg
-
-                        actual_filename = kwargs.get('file_name')
-                        if actual_filename is None and len(args) > 2:
-                            actual_filename = args[2]
+                        # Check return value for filename
+                        assert result is not None
+                        _, _, actual_filename, _ = result
 
                         # NEW BEHAVIOR: expects dynamic filename
                         assert actual_filename == "test_image_rmbg.png"
@@ -95,14 +84,10 @@ def test_fix_image_filename_uploaded_file():
             mock_upload.getvalue.return_value = b"bytes"
             # It needs to not be a string
 
-            bg_remove.fix_image(mock_upload)
+            result = bg_remove.fix_image(mock_upload)
 
-            assert mock_col2.download_button.called
-            args, kwargs = mock_col2.download_button.call_args
-
-            actual_filename = kwargs.get('file_name')
-            if actual_filename is None and len(args) > 2:
-                actual_filename = args[2]
+            assert result is not None
+            _, _, actual_filename, _ = result
 
             # NEW BEHAVIOR: expects dynamic filename
             assert actual_filename == "my_upload_rmbg.png"
