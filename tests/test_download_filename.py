@@ -3,7 +3,11 @@ from unittest.mock import MagicMock, patch
 import os
 
 # Clean up sys.modules to ensure we load bg_remove with OUR mocks
-keys_to_remove = [k for k in sys.modules if 'bg_remove' in k or 'PIL' in k or 'streamlit' in k or 'rembg' in k]
+keys_to_remove = [
+    k
+    for k in sys.modules
+    if "bg_remove" in k or "PIL" in k or "streamlit" in k or "rembg" in k
+]
 for k in keys_to_remove:
     del sys.modules[k]
 
@@ -14,28 +18,33 @@ mock_col2 = MagicMock()
 mock_st.columns.return_value = [mock_col1, mock_col2]
 mock_st.sidebar.file_uploader.return_value = None
 
+
 # Improved cache decorator mock to handle both @decorator and @decorator(...)
 def mock_cache_decorator(*args, **kwargs):
     if len(args) == 1 and callable(args[0]):
         return args[0]
     return lambda func: func
 
+
 mock_st.cache_data = mock_cache_decorator
 mock_st.cache_resource = mock_cache_decorator
-mock_st.session_state = {} # Initialize session state
+mock_st.session_state = {}  # Initialize session state
 
-sys.modules['streamlit'] = mock_st
-sys.modules['rembg'] = MagicMock()
-sys.modules['numpy'] = MagicMock()
+sys.modules["streamlit"] = mock_st
+sys.modules["rembg"] = MagicMock()
+sys.modules["numpy"] = MagicMock()
 
 # Setup Image mock
 mock_image_module = MagicMock()
 mock_image_module.LANCZOS = 1
 mock_image_module.BICUBIC = 2
 
+
 # Define exception class for DecompressionBombError
 class MockDecompressionBombError(Exception):
     pass
+
+
 mock_image_module.DecompressionBombError = MockDecompressionBombError
 
 # We need a real-ish Image object for process_image to work
@@ -49,13 +58,14 @@ mock_img_instance.save = MagicMock()
 
 mock_image_module.open.return_value = mock_img_instance
 
-sys.modules['PIL'] = MagicMock()
-sys.modules['PIL'].Image = mock_image_module
-sys.modules['PIL.Image'] = mock_image_module
+sys.modules["PIL"] = MagicMock()
+sys.modules["PIL"].Image = mock_image_module
+sys.modules["PIL.Image"] = mock_image_module
 
 # Import the module
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/../'))
+sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/../"))
 import bg_remove  # noqa: E402
+
 
 def test_download_filename_for_uploaded_file():
     """
@@ -87,9 +97,10 @@ def test_download_filename_for_default_image():
     mock_col2.download_button.reset_mock()
 
     # Mock os.path.exists and open to handle the default image path
-    with patch("os.path.exists", return_value=True), \
-         patch("builtins.open", new_callable=MagicMock) as mock_open:
-
+    with (
+        patch("os.path.exists", return_value=True),
+        patch("builtins.open", new_callable=MagicMock) as mock_open,
+    ):
         mock_file = MagicMock()
         mock_file.read.return_value = b"fake_bytes"
         mock_open.return_value.__enter__.return_value = mock_file

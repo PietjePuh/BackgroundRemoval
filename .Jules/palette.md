@@ -23,5 +23,9 @@
 **Action:** Enhance download buttons to include file size and/or dimensions in the label or tooltip whenever the data is available.
 
 ## 2025-05-28 - Conditional Empty States
-**Learning:** When UI elements like file uploaders are revealed conditionally (e.g., via radio button selection), users may miss that an action is required if the element is empty. Explicitly guiding them with an empty state message ("👆 Upload an image...") reduces confusion about why the result hasn't changed.
+**Learning:** When UI elements like file uploaders are revealed conditionally (e.g., via radio button selection), users may miss that an action is required if the element is empty. Explicitly guiding them with an empty state message ("👆 Upload an image...") reduces confusion and guides the next action.
 **Action:** Always provide a helpful instruction or empty state message when a user selects a mode that requires additional input but hasn't provided it yet.
+
+## 2025-05-29 - Explicit Action Confirmation
+**Learning:** Users feel more confident in an action (like download) when the label explicitly confirms the *specific* object being acted upon (e.g. "Download my_photo_rmbg.png") rather than a generic category ("Download PNG"). This reduces anxiety about whether the correct file is being handled.
+**Action:** Whenever possible, include the dynamic filename in the primary action button label to reinforce the connection between the user's input and the system's output.

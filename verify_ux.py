@@ -1,59 +1,56 @@
-import time
-import requests
 from playwright.sync_api import sync_playwright
 
-def verify_ux():
-    # Wait for Streamlit
-    print("Waiting for Streamlit...")
-    for _ in range(30):
-        try:
-            resp = requests.get("http://localhost:8501/_stcore/health")
-            if resp.status_code == 200:
-                break
-        except requests.ConnectionError:
-            pass
-        time.sleep(1)
-    else:
-        print("Timeout waiting for Streamlit")
-        return
 
-    print("Streamlit is up! Launching browser...")
-
+def run():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        # Emulate a desktop viewport
-        context = browser.new_context(viewport={"width": 1280, "height": 720})
-        page = context.new_page()
+        page = browser.new_page()
 
+        print("Navigating to app...")
         try:
-            page.goto("http://localhost:8501")
+            page.goto("http://localhost:8501", timeout=60000)
 
-            # Wait for main title to confirm app loaded
-            # Increase timeout as rembg model loading might be slow on startup (can be > 2 mins)
-            print("Waiting for app title...")
-            page.wait_for_selector("h1:has-text('Remove background from your image')", timeout=300000)
+            # Wait for the title with extended timeout
+            print("Waiting for H1 title (up to 300s)...")
+            page.wait_for_selector("h1", timeout=300000)
+            print("App loaded.")
 
-            # Find the "Custom Image" radio option in the sidebar
-            print("Clicking 'Custom Image'...")
-            # Use a locator that finds the text inside a label or span associated with the radio
-            # Streamlit renders radio options as <label> elements containing the text
-            # We use .first because sometimes text matches multiple elements
-            custom_image_option = page.locator("label").filter(has_text="Custom Image").first
-            custom_image_option.click()
+            # The app automatically processes the default image on load (zebra.jpg)
+            # We need to wait for the download button to appear
+            print("Waiting for processing (looking for 'Background Removed')...")
+            # Processing might take time (rembg model download/init)
+            # Wait for "Background Removed" header
+            page.wait_for_selector("text=Background Removed", timeout=300000)
 
-            # Wait for the info message
-            print("Waiting for info message...")
-            info_message = "👆 Upload an image to use as background"
-            page.wait_for_selector(f"text={info_message}", timeout=10000)
+            # Find the download button
+            # The button text should now contain "zebra_rmbg.png"
+            print("Looking for download button...")
 
-            print("Info message found! Taking screenshot...")
-            page.screenshot(path="verification_screenshot.png")
+            # We can look for a button that contains the filename
+            download_button = page.get_by_role("button", name="Download zebra_rmbg.png")
+
+            # Wait for it to be visible
+            download_button.wait_for(state="visible", timeout=30000)
+
+            if download_button.is_visible():
+                print("SUCCESS: Download button with filename found!")
+                print(f"Button text: {download_button.inner_text()}")
+            else:
+                print("FAILURE: Download button with filename NOT found.")
+
+            # Take screenshot
+            page.screenshot(path="verification_screenshot.png", full_page=True)
+            print("Screenshot saved to verification_screenshot.png")
 
         except Exception as e:
-            print(f"Error during verification: {e}")
-            page.screenshot(path="error_screenshot.png")
+            print(f"Error: {e}")
+            page.screenshot(path="error_screenshot.png", full_page=True)
+            print("Saved error_screenshot.png")
+            print("Page content dump:")
+            print(page.content())
         finally:
             browser.close()
 
+
 if __name__ == "__main__":
-    verify_ux()
+    run()
