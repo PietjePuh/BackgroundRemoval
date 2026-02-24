@@ -1,6 +1,5 @@
 import sys
 from unittest.mock import MagicMock
-import pytest
 
 def test_custom_bg_warning_shows_when_no_image_uploaded():
     """Verify that a warning/info message is shown when custom background mode is selected but no image is uploaded."""
@@ -51,7 +50,7 @@ def test_custom_bg_warning_shows_when_no_image_uploaded():
     sys.modules["PIL.ImageFilter"] = mock_pil.ImageFilter
 
     # 2. Import bg_remove to run the script
-    import bg_remove
+    import bg_remove  # noqa: E402, F401
 
     # 3. Verify the info message was shown
     mock_st.sidebar.info.assert_called_with("👆 Upload an image to use as background")
