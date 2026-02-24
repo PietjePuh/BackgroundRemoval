@@ -345,7 +345,7 @@ def display_single_result(image, result, output_filename, result_bytes, output_f
     size_str = format_file_size(len(result_bytes))
     resolution_str = f"{result.width}x{result.height}"
     col2.download_button(
-        f"Download {output_format} image ({size_str})",
+        f"Download {output_filename} ({size_str})",
         result_bytes,
         output_filename,
         get_format_mime(output_format),

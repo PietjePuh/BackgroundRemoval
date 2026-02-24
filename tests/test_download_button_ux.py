@@ -82,7 +82,7 @@ def test_download_button_ux_label_and_help():
     # Check label (first arg)
     label = args[0]
     assert "1.0 KB" in label
-    assert "Download PNG image" in label
+    assert f"Download {output_filename}" in label
 
     # Check help (kwargs)
     help_text = kwargs.get('help')
