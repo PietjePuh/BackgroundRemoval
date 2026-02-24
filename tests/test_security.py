@@ -7,15 +7,16 @@ mock_st = MagicMock()
 mock_st.columns.return_value = [MagicMock(), MagicMock()]
 mock_st.sidebar.file_uploader.return_value = None
 
-sys.modules['streamlit'] = mock_st
-sys.modules['rembg'] = MagicMock()
-sys.modules['PIL'] = MagicMock()
-sys.modules['PIL.Image'] = MagicMock()
-sys.modules['numpy'] = MagicMock()
+sys.modules["streamlit"] = mock_st
+sys.modules["rembg"] = MagicMock()
+sys.modules["PIL"] = MagicMock()
+sys.modules["PIL.Image"] = MagicMock()
+sys.modules["numpy"] = MagicMock()
 
 # 2. Import the module
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/../'))
+sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/../"))
 import bg_remove  # noqa: E402
+
 
 def test_fix_image_blocks_arbitrary_file():
     """
@@ -25,16 +26,18 @@ def test_fix_image_blocks_arbitrary_file():
 
     m = mock_open(read_data=b"fake data")
 
-    with patch("builtins.open", m), \
-         patch("os.path.exists", return_value=True), \
-         patch.object(bg_remove, "process_image") as mock_process:
-
+    with (
+        patch("builtins.open", m),
+        patch("os.path.exists", return_value=True),
+        patch.object(bg_remove, "process_image") as mock_process,
+    ):
         mock_process.return_value = (MagicMock(), MagicMock())
 
         bg_remove.fix_image(test_file)
 
         # ASSERTION: The file WAS NOT opened.
         m.assert_not_called()
+
 
 def test_fix_image_reads_default_image():
     """
@@ -43,10 +46,11 @@ def test_fix_image_reads_default_image():
     test_file = "./zebra.jpg"
     m = mock_open(read_data=b"fake data")
 
-    with patch("builtins.open", m), \
-         patch("os.path.exists", return_value=True), \
-         patch.object(bg_remove, "process_image") as mock_process:
-
+    with (
+        patch("builtins.open", m),
+        patch("os.path.exists", return_value=True),
+        patch.object(bg_remove, "process_image") as mock_process,
+    ):
         mock_process.return_value = (MagicMock(), MagicMock())
 
         bg_remove.fix_image(test_file)
