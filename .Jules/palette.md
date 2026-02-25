@@ -37,3 +37,7 @@
 ## 2025-05-31 - Automated Formatting
 **Learning:** CI pipelines enforce strict formatting rules (like 24 files left unchanged). Manual formatting is error-prone.
 **Action:** Always run 24 files left unchanged and All checks passed! before submitting to ensure compliance and avoid CI failures.
+
+## 2025-06-01 - Dependency Evolution
+**Learning:** System dependencies in Dockerfiles (like `libgl1-mesa-glx`) can become obsolete or renamed in newer base images (like `python:3.11-slim` based on Debian Trixie).
+**Action:** Periodically review and update system package names when upgrading base images or encountering build failures.
