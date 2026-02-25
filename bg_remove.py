@@ -432,7 +432,7 @@ bg_mode = st.sidebar.radio(
 
 if output_format == "JPEG" and bg_mode == "transparent":
     st.sidebar.info(
-        "Note: JPEG does not support transparency. Result will have a white background."
+        "ℹ️ Note: JPEG does not support transparency. Result will have a white background."
     )
 
 bg_color = None

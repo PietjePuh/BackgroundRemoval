@@ -29,3 +29,7 @@
 ## 2025-05-29 - Cross-Constraint Feedback
 **Learning:** When two independent settings (like output format and background mode) conflict or produce unexpected results (e.g., JPEG + Transparent = White), users assume the tool is broken. Proactively warning about these constraints prevents frustration.
 **Action:** Detect incompatible or suboptimal combinations of settings and display a non-blocking `st.info` or `st.warning` message to manage expectations.
+
+## 2025-05-30 - Fix for Linting in Tests
+**Learning:** Top-level imports in test files can cause side effects and unused import errors (F401, E402) when mocking.
+**Action:** Use `# noqa: F401` for necessary imports that are used for their side effects (like running a script) and ensure standard imports are at the top.

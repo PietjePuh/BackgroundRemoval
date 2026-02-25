@@ -1,7 +1,6 @@
 import sys
 import os
 from unittest.mock import MagicMock, patch
-import pytest
 
 # Helper to clean up modules
 def clean_modules():
@@ -44,19 +43,19 @@ def test_jpeg_transparent_warning_shown():
 
     # Mock os.path.exists to prevent default image processing
     with patch("os.path.exists", return_value=False):
-        import bg_remove
+        import bg_remove  # noqa: F401
 
     # Check if the specific info message was called
-    expected_msg = "Note: JPEG does not support transparency. Result will have a white background."
+    expected_msg = "ℹ️ Note: JPEG does not support transparency. Result will have a white background."
     mock_st.sidebar.info.assert_called_with(expected_msg)
 
 def test_jpeg_transparent_warning_not_shown_for_png():
     mock_st = setup_mocks("PNG", "transparent")
 
     with patch("os.path.exists", return_value=False):
-        import bg_remove
+        import bg_remove  # noqa: F401
 
-    expected_msg = "Note: JPEG does not support transparency. Result will have a white background."
+    expected_msg = "ℹ️ Note: JPEG does not support transparency. Result will have a white background."
     # Get all calls to sidebar.info
     calls = [args[0] for args, _ in mock_st.sidebar.info.call_args_list]
     assert expected_msg not in calls
@@ -65,8 +64,8 @@ def test_jpeg_transparent_warning_not_shown_for_solid_color():
     mock_st = setup_mocks("JPEG", "solid_color")
 
     with patch("os.path.exists", return_value=False):
-        import bg_remove
+        import bg_remove  # noqa: F401
 
-    expected_msg = "Note: JPEG does not support transparency. Result will have a white background."
+    expected_msg = "ℹ️ Note: JPEG does not support transparency. Result will have a white background."
     calls = [args[0] for args, _ in mock_st.sidebar.info.call_args_list]
     assert expected_msg not in calls

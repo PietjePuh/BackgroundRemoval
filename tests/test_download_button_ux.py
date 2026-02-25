@@ -1,7 +1,6 @@
 import sys
-from unittest.mock import MagicMock, patch
-import pytest
 import os
+from unittest.mock import MagicMock
 
 # Clean up sys.modules to ensure we load bg_remove with OUR mocks
 keys_to_remove = [k for k in sys.modules if 'bg_remove' in k or 'PIL' in k or 'streamlit' in k or 'rembg' in k]
@@ -37,8 +36,8 @@ sys.modules['PIL'].Image = mock_image_module
 sys.modules['PIL.Image'] = mock_image_module
 
 # Import the module
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/../'))
-import bg_remove
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import bg_remove  # noqa: E402
 
 def test_format_file_size():
     """Test the file size formatting helper."""
