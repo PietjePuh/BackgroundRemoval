@@ -25,3 +25,19 @@
 ## 2025-05-28 - Conditional Empty States
 **Learning:** When UI elements like file uploaders are revealed conditionally (e.g., via radio button selection), users may miss that an action is required if the element is empty. Explicitly guiding them with an empty state message ("👆 Upload an image...") reduces confusion about why the result hasn't changed.
 **Action:** Always provide a helpful instruction or empty state message when a user selects a mode that requires additional input but hasn't provided it yet.
+
+## 2025-05-29 - Cross-Constraint Feedback
+**Learning:** When two independent settings (like output format and background mode) conflict or produce unexpected results (e.g., JPEG + Transparent = White), users assume the tool is broken. Proactively warning about these constraints prevents frustration.
+**Action:** Detect incompatible or suboptimal combinations of settings and display a non-blocking `st.info` or `st.warning` message to manage expectations.
+
+## 2025-05-30 - Fix for Linting in Tests
+**Learning:** Top-level imports in test files can cause side effects and unused import errors (F401, E402) when mocking.
+**Action:** Use `# noqa: F401` for necessary imports that are used for their side effects (like running a script) and ensure standard imports are at the top.
+
+## 2025-05-31 - Automated Formatting
+**Learning:** CI pipelines enforce strict formatting rules (like 24 files left unchanged). Manual formatting is error-prone.
+**Action:** Always run 24 files left unchanged and All checks passed! before submitting to ensure compliance and avoid CI failures.
+
+## 2025-06-01 - Dependency Evolution
+**Learning:** System dependencies in Dockerfiles (like `libgl1-mesa-glx`) can become obsolete or renamed in newer base images (like `python:3.11-slim` based on Debian Trixie).
+**Action:** Periodically review and update system package names when upgrading base images or encountering build failures.
