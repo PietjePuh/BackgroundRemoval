@@ -33,3 +33,7 @@
 ## 2025-05-30 - Fix for Linting in Tests
 **Learning:** Top-level imports in test files can cause side effects and unused import errors (F401, E402) when mocking.
 **Action:** Use `# noqa: F401` for necessary imports that are used for their side effects (like running a script) and ensure standard imports are at the top.
+
+## 2025-05-31 - Automated Formatting
+**Learning:** CI pipelines enforce strict formatting rules (like 24 files left unchanged). Manual formatting is error-prone.
+**Action:** Always run 24 files left unchanged and All checks passed! before submitting to ensure compliance and avoid CI failures.

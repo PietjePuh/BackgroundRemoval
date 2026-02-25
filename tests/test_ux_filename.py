@@ -3,7 +3,11 @@ from unittest.mock import MagicMock, patch
 import os
 
 # Clean up sys.modules to ensure we load bg_remove with OUR mocks
-keys_to_remove = [k for k in sys.modules if 'bg_remove' in k or 'PIL' in k or 'streamlit' in k or 'rembg' in k]
+keys_to_remove = [
+    k
+    for k in sys.modules
+    if "bg_remove" in k or "PIL" in k or "streamlit" in k or "rembg" in k
+]
 for k in keys_to_remove:
     del sys.modules[k]
 
@@ -19,22 +23,27 @@ mock_st.cache_resource = lambda *args, **kwargs: lambda func: func
 # Mock session state
 mock_st.session_state = {}
 
-sys.modules['streamlit'] = mock_st
-sys.modules['rembg'] = MagicMock()
-sys.modules['numpy'] = MagicMock()
+sys.modules["streamlit"] = mock_st
+sys.modules["rembg"] = MagicMock()
+sys.modules["numpy"] = MagicMock()
 
 mock_image_module = MagicMock()
+
+
 class MockDecompressionBombError(Exception):
     pass
+
+
 mock_image_module.DecompressionBombError = MockDecompressionBombError
 
-sys.modules['PIL'] = MagicMock()
-sys.modules['PIL'].Image = mock_image_module
-sys.modules['PIL.Image'] = mock_image_module
+sys.modules["PIL"] = MagicMock()
+sys.modules["PIL"].Image = mock_image_module
+sys.modules["PIL.Image"] = mock_image_module
 
 # Import the module
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/../'))
+sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/../"))
 import bg_remove  # noqa: E402
+
 
 def test_fix_image_filename_string():
     """Test that fix_image uses the correct filename for download button (string input)."""
@@ -50,7 +59,9 @@ def test_fix_image_filename_string():
             with patch("os.path.exists", return_value=True):
                 # Mock builtins.open
                 with patch("builtins.open", new_callable=MagicMock) as mock_open:
-                    mock_open.return_value.__enter__.return_value.read.return_value = b"fake_bytes_from_file"
+                    mock_open.return_value.__enter__.return_value.read.return_value = (
+                        b"fake_bytes_from_file"
+                    )
 
                     # Add test path to allowed default images temporarily or mock check
                     original_defaults = bg_remove.DEFAULT_IMAGES
@@ -68,6 +79,7 @@ def test_fix_image_filename_string():
 
                     finally:
                         bg_remove.DEFAULT_IMAGES = original_defaults
+
 
 def test_fix_image_filename_uploaded_file():
     """Test that fix_image uses the correct filename for download button (UploadedFile input)."""
