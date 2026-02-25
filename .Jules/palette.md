@@ -25,3 +25,7 @@
 ## 2025-05-28 - Conditional Empty States
 **Learning:** When UI elements like file uploaders are revealed conditionally (e.g., via radio button selection), users may miss that an action is required if the element is empty. Explicitly guiding them with an empty state message ("👆 Upload an image...") reduces confusion about why the result hasn't changed.
 **Action:** Always provide a helpful instruction or empty state message when a user selects a mode that requires additional input but hasn't provided it yet.
+
+## 2025-05-29 - Cross-Constraint Feedback
+**Learning:** When two independent settings (like output format and background mode) conflict or produce unexpected results (e.g., JPEG + Transparent = White), users assume the tool is broken. Proactively warning about these constraints prevents frustration.
+**Action:** Detect incompatible or suboptimal combinations of settings and display a non-blocking `st.info` or `st.warning` message to manage expectations.

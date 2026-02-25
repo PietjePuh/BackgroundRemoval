@@ -430,6 +430,11 @@ bg_mode = st.sidebar.radio(
     help="Choose what to replace the background with",
 )
 
+if output_format == "JPEG" and bg_mode == "transparent":
+    st.sidebar.info(
+        "Note: JPEG does not support transparency. Result will have a white background."
+    )
+
 bg_color = None
 bg_blur_radius = 15
 bg_custom_image = None
