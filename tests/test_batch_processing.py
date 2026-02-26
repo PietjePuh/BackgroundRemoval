@@ -87,9 +87,15 @@ class TestFixImageBatch:
         mock_fixed = MagicMock()
         mock_fixed.mode = "RGBA"
 
-        with patch.object(bg_remove, "process_image", return_value=(mock_original, mock_fixed)):
-            with patch.object(bg_remove, "apply_background_replacement", return_value=mock_fixed):
-                with patch.object(bg_remove, "convert_image_to_format", return_value=b"output_bytes"):
+        with patch.object(
+            bg_remove, "process_image", return_value=(mock_original, mock_fixed)
+        ):
+            with patch.object(
+                bg_remove, "apply_background_replacement", return_value=mock_fixed
+            ):
+                with patch.object(
+                    bg_remove, "convert_image_to_format", return_value=b"output_bytes"
+                ):
                     result = bg_remove.fix_image(mock_upload, output_format="PNG")
 
                     assert result is not None
@@ -121,9 +127,15 @@ class TestFixImageBatch:
         mock_fixed = MagicMock()
         mock_fixed.mode = "RGBA"
 
-        with patch.object(bg_remove, "process_image", return_value=(mock_original, mock_fixed)):
-            with patch.object(bg_remove, "apply_background_replacement", return_value=mock_fixed):
-                with patch.object(bg_remove, "convert_image_to_format", return_value=b"output"):
+        with patch.object(
+            bg_remove, "process_image", return_value=(mock_original, mock_fixed)
+        ):
+            with patch.object(
+                bg_remove, "apply_background_replacement", return_value=mock_fixed
+            ):
+                with patch.object(
+                    bg_remove, "convert_image_to_format", return_value=b"output"
+                ):
                     result = bg_remove.fix_image(mock_upload, output_format="WEBP")
 
                     assert result is not None
@@ -141,9 +153,15 @@ class TestFixImageBatch:
         mock_fixed = MagicMock()
         mock_fixed.mode = "RGBA"
 
-        with patch.object(bg_remove, "process_image", return_value=(mock_original, mock_fixed)):
-            with patch.object(bg_remove, "apply_background_replacement", return_value=mock_fixed):
-                with patch.object(bg_remove, "convert_image_to_format", return_value=b"output"):
+        with patch.object(
+            bg_remove, "process_image", return_value=(mock_original, mock_fixed)
+        ):
+            with patch.object(
+                bg_remove, "apply_background_replacement", return_value=mock_fixed
+            ):
+                with patch.object(
+                    bg_remove, "convert_image_to_format", return_value=b"output"
+                ):
                     result = bg_remove.fix_image(mock_upload, output_format="JPEG")
 
                     assert result is not None

@@ -3,7 +3,11 @@ from unittest.mock import MagicMock, patch
 import os
 
 # Clean up sys.modules to ensure we load bg_remove with OUR mocks
-keys_to_remove = [k for k in sys.modules if 'bg_remove' in k or 'PIL' in k or 'streamlit' in k or 'rembg' in k]
+keys_to_remove = [
+    k
+    for k in sys.modules
+    if "bg_remove" in k or "PIL" in k or "streamlit" in k or "rembg" in k
+]
 for k in keys_to_remove:
     del sys.modules[k]
 
@@ -14,27 +18,32 @@ mock_st.sidebar.file_uploader.return_value = None
 # Make cache_data a pass-through decorator (factory pattern)
 mock_st.cache_data = lambda *args, **kwargs: lambda func: func
 
-sys.modules['streamlit'] = mock_st
-sys.modules['rembg'] = MagicMock()
-sys.modules['numpy'] = MagicMock()
+sys.modules["streamlit"] = mock_st
+sys.modules["rembg"] = MagicMock()
+sys.modules["numpy"] = MagicMock()
 
 # Setup Image mock
 mock_image_module = MagicMock()
+
+
 class MockDecompressionBombError(Exception):
     pass
+
+
 mock_image_module.DecompressionBombError = MockDecompressionBombError
 # Assign values to filters to verify usage
 mock_image_module.LANCZOS = 1
 mock_image_module.BICUBIC = 2
 
 # Crucial: Link PIL.Image in sys.modules AND on the PIL mock
-sys.modules['PIL'] = MagicMock()
-sys.modules['PIL'].Image = mock_image_module
-sys.modules['PIL.Image'] = mock_image_module
+sys.modules["PIL"] = MagicMock()
+sys.modules["PIL"].Image = mock_image_module
+sys.modules["PIL.Image"] = mock_image_module
 
 # Import the module
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/../'))
+sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/../"))
 import bg_remove  # noqa: E402
+
 
 def test_process_image_handles_decompression_bomb():
     """
@@ -55,13 +64,14 @@ def test_process_image_handles_decompression_bomb():
             # Expect specific error message (Target Behavior)
             mock_error.assert_called_with("Image is too large to process.")
 
+
 def test_resize_image_uses_bicubic():
     """
     Test that resize_image uses BICUBIC filter.
     """
     # Create a mock image
     mock_img = MagicMock()
-    mock_img.size = (5000, 5000) # Large enough to trigger resize
+    mock_img.size = (5000, 5000)  # Large enough to trigger resize
 
     # We need to ensure resize returns something
     mock_img.resize.return_value = MagicMock()
