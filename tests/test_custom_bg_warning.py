@@ -10,6 +10,8 @@ def test_custom_bg_warning_shows_when_no_image_uploaded():
     mock_st.columns.return_value = [MagicMock(), MagicMock()]
 
     # Configure the radio button to return "custom_image"
+    # Note: Streamlit widgets often return the key or the formatted value depending on usage.
+    # In bg_remove.py, st.sidebar.radio returns the key because keys are used in the options list.
     mock_st.sidebar.radio.return_value = "custom_image"
 
     # Configure file_uploader to return None (no file uploaded)
@@ -55,6 +57,7 @@ def test_custom_bg_warning_shows_when_no_image_uploaded():
     sys.modules["PIL.ImageFilter"] = mock_pil.ImageFilter
 
     # 2. Import bg_remove to run the script
+    import bg_remove  # noqa: F401
 
     # 3. Verify the info message was shown
     mock_st.sidebar.info.assert_called_with("👆 Upload an image to use as background")
