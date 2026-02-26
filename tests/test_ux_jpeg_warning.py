@@ -1,6 +1,7 @@
 import sys
 from unittest.mock import MagicMock
 
+
 def test_jpeg_transparent_warning_shows():
     """Verify that a warning/info message is shown when JPEG format and Transparent background are selected."""
 
@@ -32,7 +33,11 @@ def test_jpeg_transparent_warning_shows():
     mock_st.image = MagicMock()
 
     # Clean sys.modules
-    keys_to_remove = [k for k in sys.modules if "bg_remove" in k or "PIL" in k or "streamlit" in k or "rembg" in k]
+    keys_to_remove = [
+        k
+        for k in sys.modules
+        if "bg_remove" in k or "PIL" in k or "streamlit" in k or "rembg" in k
+    ]
     for k in keys_to_remove:
         del sys.modules[k]
 
@@ -48,4 +53,6 @@ def test_jpeg_transparent_warning_shows():
 
     # 3. Verify the info message was shown
     # Note: Using assert_any_call because there might be other calls
-    mock_st.sidebar.info.assert_any_call("ℹ️ JPEG does not support transparency. Result will have a white background.")
+    mock_st.sidebar.info.assert_any_call(
+        "ℹ️ JPEG does not support transparency. Result will have a white background."
+    )
