@@ -1,6 +1,5 @@
 import sys
 from unittest.mock import MagicMock
-import pytest
 
 def test_jpeg_transparent_warning_shows():
     """Verify that a warning/info message is shown when JPEG format and Transparent background are selected."""
