@@ -434,6 +434,9 @@ bg_color = None
 bg_blur_radius = 15
 bg_custom_image = None
 
+if output_format == "JPEG" and bg_mode == "transparent":
+    st.sidebar.info("ℹ️ JPEG does not support transparency. Result will have a white background.")
+
 if bg_mode == "solid_color":
     bg_color = st.sidebar.color_picker("Background color", "#FFFFFF")
 elif bg_mode == "blur":
