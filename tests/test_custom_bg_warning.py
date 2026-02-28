@@ -55,6 +55,7 @@ def test_custom_bg_warning_shows_when_no_image_uploaded():
     sys.modules["PIL.ImageFilter"] = mock_pil.ImageFilter
 
     # 2. Import bg_remove to run the script
+    import bg_remove  # noqa: F401
 
     # 3. Verify the info message was shown
     mock_st.sidebar.info.assert_called_with("👆 Upload an image to use as background")
