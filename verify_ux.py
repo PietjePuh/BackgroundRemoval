@@ -2,6 +2,7 @@ import time
 import requests
 from playwright.sync_api import sync_playwright
 
+
 def verify_ux():
     # Wait for Streamlit
     print("Waiting for Streamlit...")
@@ -31,14 +32,18 @@ def verify_ux():
             # Wait for main title to confirm app loaded
             # Increase timeout as rembg model loading might be slow on startup (can be > 2 mins)
             print("Waiting for app title...")
-            page.wait_for_selector("h1:has-text('Remove background from your image')", timeout=300000)
+            page.wait_for_selector(
+                "h1:has-text('Remove background from your image')", timeout=300000
+            )
 
             # Find the "Custom Image" radio option in the sidebar
             print("Clicking 'Custom Image'...")
             # Use a locator that finds the text inside a label or span associated with the radio
             # Streamlit renders radio options as <label> elements containing the text
             # We use .first because sometimes text matches multiple elements
-            custom_image_option = page.locator("label").filter(has_text="Custom Image").first
+            custom_image_option = (
+                page.locator("label").filter(has_text="Custom Image").first
+            )
             custom_image_option.click()
 
             # Wait for the info message
@@ -54,6 +59,7 @@ def verify_ux():
             page.screenshot(path="error_screenshot.png")
         finally:
             browser.close()
+
 
 if __name__ == "__main__":
     verify_ux()

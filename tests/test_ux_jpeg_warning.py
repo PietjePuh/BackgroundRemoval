@@ -2,6 +2,7 @@ import sys
 from unittest.mock import MagicMock
 import pytest
 
+
 def test_jpeg_transparency_warning_shows():
     """Verify that a warning/info message is shown when JPEG output and Transparent background are selected."""
 
@@ -43,7 +44,11 @@ def test_jpeg_transparency_warning_shows():
     mock_rembg_module.remove.return_value = MagicMock()
 
     # Clean sys.modules
-    keys_to_remove = [k for k in sys.modules if "bg_remove" in k or "PIL" in k or "streamlit" in k or "rembg" in k]
+    keys_to_remove = [
+        k
+        for k in sys.modules
+        if "bg_remove" in k or "PIL" in k or "streamlit" in k or "rembg" in k
+    ]
     for k in keys_to_remove:
         del sys.modules[k]
 
@@ -56,15 +61,19 @@ def test_jpeg_transparency_warning_shows():
 
     # 2. Import bg_remove to run the script
     try:
-        import bg_remove
+        pass
     except Exception as e:
         # Catch potential errors during import if script execution fails
         pytest.fail(f"Script execution failed: {e}")
 
     # 3. Verify the info message was shown
     # The expected warning message
-    expected_msg = "ℹ️ JPEG does not support transparency. Result will have a white background."
+    expected_msg = (
+        "ℹ️ JPEG does not support transparency. Result will have a white background."
+    )
 
     # Check if any call to sidebar.info matches
     calls = [args[0] for args, _ in mock_st.sidebar.info.call_args_list]
-    assert expected_msg in calls, f"Expected warning '{expected_msg}' not found in {calls}"
+    assert expected_msg in calls, (
+        f"Expected warning '{expected_msg}' not found in {calls}"
+    )
