@@ -3,7 +3,11 @@ from unittest.mock import MagicMock, patch
 import os
 
 # Clean up sys.modules to ensure we load bg_remove with OUR mocks
-keys_to_remove = [k for k in sys.modules if 'bg_remove' in k or 'PIL' in k or 'streamlit' in k or 'rembg' in k]
+keys_to_remove = [
+    k
+    for k in sys.modules
+    if "bg_remove" in k or "PIL" in k or "streamlit" in k or "rembg" in k
+]
 for k in keys_to_remove:
     del sys.modules[k]
 
@@ -14,15 +18,16 @@ mock_st.sidebar.file_uploader.return_value = None
 # Make cache_data a pass-through decorator (factory pattern)
 mock_st.cache_data = lambda *args, **kwargs: lambda func: func
 
-sys.modules['streamlit'] = mock_st
-sys.modules['rembg'] = MagicMock()
-sys.modules['numpy'] = MagicMock()
-sys.modules['PIL'] = MagicMock()
-sys.modules['PIL.Image'] = MagicMock()
+sys.modules["streamlit"] = mock_st
+sys.modules["rembg"] = MagicMock()
+sys.modules["numpy"] = MagicMock()
+sys.modules["PIL"] = MagicMock()
+sys.modules["PIL.Image"] = MagicMock()
 
 # Import the module
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/../'))
+sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/../"))
 import bg_remove  # noqa: E402
+
 
 def test_process_image_rejects_large_dimensions():
     """Test that process_image rejects images that exceed the max source dimension."""
