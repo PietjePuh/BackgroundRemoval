@@ -2,13 +2,18 @@ import sys
 from unittest.mock import MagicMock
 import os
 
+
 def test_no_unsafe_allow_html():
     """
     Test that st.markdown is NOT called with unsafe_allow_html=True.
     This ensures we don't accidentally enable XSS risks.
     """
     # 1. Clean up sys.modules to ensure we load bg_remove with OUR mocks
-    keys_to_remove = [k for k in sys.modules if 'bg_remove' in k or 'PIL' in k or 'streamlit' in k or 'rembg' in k]
+    keys_to_remove = [
+        k
+        for k in sys.modules
+        if "bg_remove" in k or "PIL" in k or "streamlit" in k or "rembg" in k
+    ]
     for k in keys_to_remove:
         del sys.modules[k]
 
@@ -19,14 +24,14 @@ def test_no_unsafe_allow_html():
     # Make cache_data a pass-through decorator
     mock_st.cache_data = lambda *args, **kwargs: lambda func: func
 
-    sys.modules['streamlit'] = mock_st
-    sys.modules['rembg'] = MagicMock()
-    sys.modules['numpy'] = MagicMock()
-    sys.modules['PIL'] = MagicMock()
-    sys.modules['PIL.Image'] = MagicMock()
+    sys.modules["streamlit"] = mock_st
+    sys.modules["rembg"] = MagicMock()
+    sys.modules["numpy"] = MagicMock()
+    sys.modules["PIL"] = MagicMock()
+    sys.modules["PIL.Image"] = MagicMock()
 
     # 3. Import the module
-    sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/../'))
+    sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/../"))
     import bg_remove  # noqa: F401
 
     # 4. Verify st.markdown calls
@@ -36,5 +41,7 @@ def test_no_unsafe_allow_html():
     for call in mock_st.markdown.call_args_list:
         args, kwargs = call
         # Check kwargs
-        if 'unsafe_allow_html' in kwargs:
-            assert kwargs['unsafe_allow_html'] is False, f"Found unsafe_allow_html=True in st.markdown call: {args}"
+        if "unsafe_allow_html" in kwargs:
+            assert kwargs["unsafe_allow_html"] is False, (
+                f"Found unsafe_allow_html=True in st.markdown call: {args}"
+            )
