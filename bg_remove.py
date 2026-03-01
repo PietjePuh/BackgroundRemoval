@@ -562,12 +562,17 @@ if my_uploads:
         progress_bar.progress(90)
         status_text.text("Preparing results...")
 
-        display_batch_results(results, output_format)
+        if not results:
+            progress_bar.progress(100)
+            status_text.text("Processing complete.")
+            st.warning("⚠️ No images could be processed successfully. Please check the error messages above.")
+        else:
+            display_batch_results(results, output_format)
 
-        progress_bar.progress(100)
-        processing_time = time.time() - start_time
-        status_text.text(f"Completed {len(results)} images in {processing_time:.2f} seconds")
-        st.toast(f"Batch processing complete! {len(results)} images processed.", icon="✅")
+            progress_bar.progress(100)
+            processing_time = time.time() - start_time
+            status_text.text(f"Completed {len(results)} images in {processing_time:.2f} seconds")
+            st.toast(f"Batch processing complete! {len(results)} images processed.", icon="✅")
 
 else:
     # No uploads: show default image
