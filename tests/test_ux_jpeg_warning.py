@@ -56,7 +56,7 @@ def test_jpeg_transparency_warning_shows():
 
     # 2. Import bg_remove to run the script
     try:
-        import bg_remove
+        import bg_remove  # noqa: F401
     except Exception as e:
         # Catch potential errors during import if script execution fails
         pytest.fail(f"Script execution failed: {e}")
