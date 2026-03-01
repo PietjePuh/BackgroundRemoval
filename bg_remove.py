@@ -64,7 +64,10 @@ def validate_uploaded_file(upload):
         tuple: (is_valid: bool, error_message: str or None)
     """
     if upload.size > MAX_FILE_SIZE:
-        return False, f"File '{upload.name}' is too large ({upload.size / 1024 / 1024:.1f}MB). Maximum: {MAX_FILE_SIZE / 1024 / 1024:.1f}MB."
+        return (
+            False,
+            f"File '{upload.name}' is too large ({upload.size / 1024 / 1024:.1f}MB). Maximum: {MAX_FILE_SIZE / 1024 / 1024:.1f}MB.",
+        )
     return True, None
 
 
@@ -83,7 +86,9 @@ def convert_image_to_format(img, output_format="PNG"):
 
     if output_format == "JPEG":
         # JPEG does not support transparency; composite onto white background
-        if img.mode in ("RGBA", "LA") or (img.mode == "P" and "transparency" in img.info):
+        if img.mode in ("RGBA", "LA") or (
+            img.mode == "P" and "transparency" in img.info
+        ):
             background = Image.new("RGB", img.size, (255, 255, 255))
             if img.mode == "P":
                 img = img.convert("RGBA")
@@ -179,7 +184,14 @@ def format_file_size(size_in_bytes):
         return f"{size_in_bytes / (1024 * 1024):.1f} MB"
 
 
-def apply_background_replacement(fixed_img, bg_mode, bg_color=None, bg_blur_radius=15, bg_custom_image=None, original_img=None):
+def apply_background_replacement(
+    fixed_img,
+    bg_mode,
+    bg_color=None,
+    bg_blur_radius=15,
+    bg_custom_image=None,
+    original_img=None,
+):
     """Apply background replacement to a processed (transparent) image.
 
     Args:
@@ -205,7 +217,11 @@ def apply_background_replacement(fixed_img, bg_mode, bg_color=None, bg_blur_radi
     if bg_mode == "solid_color" and bg_color is not None:
         # Parse hex color
         hex_color = bg_color.lstrip("#")
-        r, g, b = int(hex_color[0:2], 16), int(hex_color[2:4], 16), int(hex_color[4:6], 16)
+        r, g, b = (
+            int(hex_color[0:2], 16),
+            int(hex_color[2:4], 16),
+            int(hex_color[4:6], 16),
+        )
         background = Image.new("RGBA", target_size, (r, g, b, 255))
         background.paste(fixed_img, (0, 0), fixed_img)
         return background
@@ -259,7 +275,14 @@ def get_format_mime(output_format):
     return mimes.get(output_format, "image/png")
 
 
-def fix_image(upload, output_format="PNG", bg_mode="transparent", bg_color=None, bg_blur_radius=15, bg_custom_image=None):
+def fix_image(
+    upload,
+    output_format="PNG",
+    bg_mode="transparent",
+    bg_color=None,
+    bg_blur_radius=15,
+    bg_custom_image=None,
+):
     """Process a single image: remove background, apply replacement, display results.
 
     Args:
@@ -326,7 +349,15 @@ def fix_image(upload, output_format="PNG", bg_mode="transparent", bg_color=None,
         return None
 
 
-def display_single_result(image, result, output_filename, result_bytes, output_format, is_default=False, key_suffix=""):
+def display_single_result(
+    image,
+    result,
+    output_filename,
+    result_bytes,
+    output_format,
+    is_default=False,
+    key_suffix="",
+):
     """Display the before/after comparison and download button for a single image."""
     col1, col2 = st.columns(2)
 
@@ -337,9 +368,7 @@ def display_single_result(image, result, output_filename, result_bytes, output_f
     col2.image(result, use_container_width=True)
 
     if is_default:
-        col2.caption(
-            "This is a sample result. Upload your own image in the sidebar!"
-        )
+        col2.caption("This is a sample result. Upload your own image in the sidebar!")
 
     col2.markdown("\n")
     size_str = format_file_size(len(result_bytes))
@@ -435,12 +464,16 @@ bg_blur_radius = 15
 bg_custom_image = None
 
 if output_format == "JPEG" and bg_mode == "transparent":
-    st.sidebar.info("ℹ️ JPEG does not support transparency. Result will have a white background.")
+    st.sidebar.info(
+        "ℹ️ JPEG does not support transparency. Result will have a white background."
+    )
 
 if bg_mode == "solid_color":
     bg_color = st.sidebar.color_picker("Background color", "#FFFFFF")
 elif bg_mode == "blur":
-    bg_blur_radius = st.sidebar.slider("Blur radius", 5, 50, 15, help="Higher values create a more blurred background")
+    bg_blur_radius = st.sidebar.slider(
+        "Blur radius", 5, 50, 15, help="Higher values create a more blurred background"
+    )
 elif bg_mode == "custom_image":
     bg_upload = st.sidebar.file_uploader(
         "Upload background image",
@@ -527,8 +560,13 @@ if my_uploads:
             status_text.text("Displaying results...")
 
             display_single_result(
-                image, processed, output_filename, result_bytes,
-                output_format, is_default=False, key_suffix="single"
+                image,
+                processed,
+                output_filename,
+                result_bytes,
+                output_format,
+                is_default=False,
+                key_suffix="single",
             )
 
             progress_bar.progress(100)
@@ -565,14 +603,21 @@ if my_uploads:
         if not results:
             progress_bar.progress(100)
             status_text.text("Processing complete.")
-            st.warning("⚠️ No images could be processed successfully. Please check the error messages above.")
+            st.warning(
+                "⚠️ No images could be processed successfully. Please check the error messages above."
+            )
         else:
             display_batch_results(results, output_format)
 
             progress_bar.progress(100)
             processing_time = time.time() - start_time
-            status_text.text(f"Completed {len(results)} images in {processing_time:.2f} seconds")
-            st.toast(f"Batch processing complete! {len(results)} images processed.", icon="✅")
+            status_text.text(
+                f"Completed {len(results)} images in {processing_time:.2f} seconds"
+            )
+            st.toast(
+                f"Batch processing complete! {len(results)} images processed.",
+                icon="✅",
+            )
 
 else:
     # No uploads: show default image
@@ -589,8 +634,13 @@ else:
             if result is not None:
                 image, processed, output_filename, result_bytes = result
                 display_single_result(
-                    image, processed, output_filename, result_bytes,
-                    output_format, is_default=True, key_suffix="default"
+                    image,
+                    processed,
+                    output_filename,
+                    result_bytes,
+                    output_format,
+                    is_default=True,
+                    key_suffix="default",
                 )
             break
     else:

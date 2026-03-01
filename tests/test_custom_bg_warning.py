@@ -39,7 +39,11 @@ def test_custom_bg_warning_shows_when_no_image_uploaded():
     mock_rembg_module.remove.return_value = MagicMock()
 
     # Clean sys.modules
-    keys_to_remove = [k for k in sys.modules if "bg_remove" in k or "PIL" in k or "streamlit" in k or "rembg" in k]
+    keys_to_remove = [
+        k
+        for k in sys.modules
+        if "bg_remove" in k or "PIL" in k or "streamlit" in k or "rembg" in k
+    ]
     for k in keys_to_remove:
         del sys.modules[k]
 
